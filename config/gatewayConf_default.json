@@ -1,0 +1,9 @@
+{
+    "uri" : "tcp://127.0.0.1:9501",
+    "innerUri" : "tcp://127.0.0.1:9502",
+    "svrName" : "gatewaySvr",
+    "heartbeatTime" : 5,
+    "broadcastUri" : "udp://0.0.0.0:9999",
+    "swooleConf" : "config/gatewaySwooleConf.json",
+    "clusterMakerKey" : "GameID_1001"
+}

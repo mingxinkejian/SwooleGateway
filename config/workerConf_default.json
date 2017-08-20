@@ -1,0 +1,8 @@
+{
+    "uri" : "tcp://127.0.0.1:9503",
+    "svrName" : "workerSvr",
+    "heartbeatTime" : 5,
+    "broadcastUri" : "udp://0.0.0.0:9999",
+    "swooleConf" : "config/workerSwooleConf.json",
+    "clusterMakerKey" : "GameID_1001"
+}

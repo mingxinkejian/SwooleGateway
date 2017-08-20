@@ -1,0 +1,8 @@
+{
+    "uri":"tcp://127.0.0.1:9500",
+    "svrName" : "registerSvr",
+    "heartbeatTime" : 5,
+    "broadcastUri" : "udp://127.0.0.1:9999",
+    "swooleConf" : "config/registerSwooleConf.json",
+    "clusterMakerKey" : "GameID_1001"
+}

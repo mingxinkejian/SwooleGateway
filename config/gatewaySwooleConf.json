@@ -1,0 +1,13 @@
+{
+    "svrConf" : {
+        "heartbeat_idle_time": 600,
+        "heartbeat_check_interval": 60,
+        "worker_num": 4,
+        "daemonize": false,
+        "max_request": 10000,
+        "dispatch_mode": 2
+    },
+    "clientConf" : {
+        
+    }
+}

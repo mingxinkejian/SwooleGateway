@@ -1,0 +1,24 @@
+{
+    "name" : "SwooleGateway",
+    "type" : "library",
+    "description" : "",
+    "keywords" : [
+    ],
+    "license" : "MIT",
+    "authors" : [
+    {
+        "name"  :   "Ming ming",
+        "email" :   "363658434@qq.com",
+        "role"  :   "Developer"
+    }
+    ],
+    "require": {
+        "php" : ">=5.5.0"
+    },
+    "autoload": {
+        "classmap" : [],
+        "psr-4": {
+                "SwooleGateway\\": "./src"
+        }
+    }
+}
