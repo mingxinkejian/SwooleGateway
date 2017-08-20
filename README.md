@@ -3,6 +3,7 @@
 * 一个可分布式部署的TCP长连接网关
 * 专门针对游戏服务端应用场景开发，您也可有兴趣修改并定制您自己的服务
 SwooleGateway使用经典的Gateway和Worker进程模型。SwooleGateway负责维持客户端连接，并转发客户端的数据给Worker进程处理，Worker进程负责处理实际的业务逻辑，并将结果推送给对应的客户端。SwooleGateway服务和Worker服务可以分开部署在不同的服务器上，实现分布式集群。
+
 ##开发及运行环境
 PHP环境
 ```
@@ -45,6 +46,6 @@ Swoole1.9.x
 
 ```PHP
 class Author{
-    $authorName = "日月同辉";
+    $authorName = "Ming ming";
 }
 ```
