@@ -19,6 +19,7 @@ use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Protocols\BinaryProtocol;
 use SwooleGateway\Server\Connection\TCPConnection;
+use SwooleGateway\Logger\LoggerLevel;
 /**
 * 
 */
@@ -34,6 +35,8 @@ class WorkerServer extends GatewayObject
     private $_pingRegisterTimerId;
 
     private $_pingWorkerTimerId;
+
+    private $_tryToConnectGatewayTimerId = -1;
     /**
      * 保存网关信息
      * @var array
@@ -286,6 +289,8 @@ class WorkerServer extends GatewayObject
     public function registGateway($connection,$context)
     {
         $msg = json_decode($context->userData->pkg,true);
+        $this->_gatewayAddresses = array();
+
         foreach($msg['gateways'] as $addr)
         {
             $this->_gatewayAddresses[$addr['address']] = $addr['address'];
@@ -304,11 +309,8 @@ class WorkerServer extends GatewayObject
         {
             return;
         }
-
-        foreach($addresses as $value)
-        {
-            $this->connectToGateway($value);
-        }
+        $addrKey = array_rand($addresses,1);
+        $this->connectToGateway($addresses[$addrKey]);
     }
 
     public function connectToGateway($address)
@@ -317,6 +319,9 @@ class WorkerServer extends GatewayObject
 
         if(empty($this->_gatewayConnection))
         {
+            $this->_server->logger(LoggerLevel::INFO, $address);
+
+            $this->_server->swServer->clearTimer($this->_tryToConnectGatewayTimerId);
             $gatewayClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
             $gatewayClient->set($this->_swSettings['clientConf']);
             //绑定和Gateway的相关回调
@@ -371,11 +376,6 @@ class WorkerServer extends GatewayObject
             $this->_gatewayConnection->protocol->fromId = -1;
             $this->_gatewayConnection->protocol->decode($this->_gatewayConnection, $data);
         }
-        else
-        {
-            $this->_gatewayConnection->server->close();
-            $this->_gatewayConnection = null;
-        }
     }
 
     public function onGatewayReceivePkg($connection,$context)
@@ -408,12 +408,21 @@ class WorkerServer extends GatewayObject
 
     public function onGatewayClose($client)
     {
+        echo '网关连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id . PHP_EOL;
         $this->_gatewayConnection = null;
+        
+        $this->_tryToConnectGatewayTimerId = $this->_server->swServer->tick(5000, array($this, 'tryToConnectGateway'));
     }
 
     public function onGatewayError($client)
     {
+        echo socket_strerror($client->errCode) . PHP_EOL;
+    }
 
+    public function tryToConnectGateway()
+    {
+        echo '网关连接关闭！tryToConnectGateway' . PHP_EOL;
+        $this->checkGatewayConnections($this->_gatewayAddresses);
     }
     /*****************************************Gateway相关 END*********************************************************/
 }

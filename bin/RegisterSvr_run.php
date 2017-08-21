@@ -5,7 +5,7 @@
 if (version_compare(PHP_VERSION, '5.5.0', '<')) {
     die('require PHP > 5.5.0 !');
 }
-
+date_default_timezone_set('PRC');
 define('RunRoot', __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
 
 require __DIR__ . DIRECTORY_SEPARATOR .'..' . DIRECTORY_SEPARATOR . 'AutoLoader.php';

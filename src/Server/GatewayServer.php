@@ -19,6 +19,7 @@ use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Protocols\BinaryProtocol;
 use SwooleGateway\Server\Connection\TCPConnection;
+use SwooleGateway\Logger\LoggerLevel;
 /**
 * 
 */
@@ -97,6 +98,7 @@ class GatewayServer extends GatewayObject
     public function onAccept($connection)
     {
         echo 'onAccept fd:' . $connection->fd . PHP_EOL;
+        $this->_server->logger(LoggerLevel::DEBUG,'onAccept fd:' . $connection->fd);
         //获取客户端连接信息
         $swConnInfo = $connection->getConnectionInfo();
         if(empty($swConnInfo))
@@ -371,7 +373,7 @@ class GatewayServer extends GatewayObject
 
     public function innerWorkerConnect($server,$fd,$fromId)
     {
-        //获取客户端连接信息
+        //获取Worker连接信息
         $swConnInfo = $server->connection_info($fd);
         if(empty($swConnInfo))
         {

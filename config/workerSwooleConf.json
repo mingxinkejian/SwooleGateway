@@ -5,7 +5,8 @@
         "worker_num": 1,
         "daemonize": false,
         "max_request": 10000,
-        "dispatch_mode": 2
+        "dispatch_mode": 2,
+        "log_file" : "/Users/p_tingjming/Documents/SwooleGateway/log/worker_swoole.log"
     },
     "clientConf" : {
         

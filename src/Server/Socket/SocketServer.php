@@ -30,11 +30,11 @@ class SocketServer extends BaseServer
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
-        parent::__construct();
         $this->_settings = $config;
         $url = $this->parseUrl($config['uri']);
         $this->_swType = $url->type;
         $this->swServer = new \swoole_server($url->host, $url->port, $mode, $url->type);
+        parent::__construct();
     }
 
     public function sendToSocket($fd,$data)

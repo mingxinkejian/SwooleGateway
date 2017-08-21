@@ -15,7 +15,8 @@
 namespace SwooleGateway\Server;
 
 use SwooleGateway\IO\FileIO;
-
+use SwooleGateway\Logger\FileLogger;
+use SwooleGateway\Logger\LoggerLevel;
 /**
 * 
 */
@@ -28,6 +29,8 @@ class BaseServer
     protected $_settings;
     protected $_listenerList = array();
     public $noDelay = true;
+
+    private $_logger;
     /**
      * swoole 启动的回调
      * @var [type]
@@ -56,7 +59,8 @@ class BaseServer
 
     public function __construct()
     {
-        
+        $this->_logger = new FileLogger();
+        $this->_logger->init($this->_settings);
     }
 
     public function setIsDebug($isDebug)
@@ -371,5 +375,31 @@ class BaseServer
     public function serverClose($fd, $from_id = 0)
     {
         return $this->swServer->close($fd);
+    }
+
+
+    public function logger($logLevel,$msg)
+    {
+        switch ($logLevel)
+        {
+            case LoggerLevel::DEBUG:
+                $this->_logger->debug($msg);
+                break;
+            case LoggerLevel::INFO:
+                $this->_logger->info($msg);
+                break;
+            case LoggerLevel::ERROR:
+                $this->_logger->error($msg);
+                break;
+            case LoggerLevel::WARN:
+                $this->_logger->warn($msg);
+                break;
+            case LoggerLevel::NOTICE:
+                $this->_logger->notice($msg);
+                break;
+            default:
+                # code...
+                break;
+        }
     }
 }

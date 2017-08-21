@@ -81,6 +81,16 @@ class RegisterServer extends GatewayObject
     public function onClose($connection)
     {
         echo 'onClose fd:' . $connection->fd . PHP_EOL;
+        //剔除下线的服务器
+        if(isset($this->_gatewayConnections[$connection->id]))
+        {
+            unset($this->_gatewayConnections[$connection->id]);
+            $this->broadcastGatewayToWorker();
+        }
+        if(isset($this->_workerConnections[$connection->id]))
+        {
+            unset($this->_workerConnections[$connection->id]);
+        }
     }
 
     /**

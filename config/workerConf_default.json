@@ -4,5 +4,11 @@
     "heartbeatTime" : 5,
     "broadcastUri" : "udp://0.0.0.0:9999",
     "swooleConf" : "config/workerSwooleConf.json",
-    "clusterMakerKey" : "GameID_1001"
+    "clusterMakerKey" : "GameID_1001",
+    "logConfig" : {
+        "logPath" : "/Users/p_tingjming/Documents/SwooleGateway/log/workerSvr",
+        "isCache" : true,
+        "queueMax" : 100,
+        "logLevel" : 1
+    }
 }
