@@ -11,15 +11,14 @@
 # @link      xxxx
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
-namespace SwooleGateway\Server\Connection;
 
-/**
-* 用来保存连接信息
-*/
-class TCPConnection extends AConnection
+namespace SwooleGateway\Logger;
+
+class LoggerLevel
 {
-
-    function __construct()
-    {
-    }
+    const DEBUG     = 1;
+    const INFO      = 2;
+    const ERROR     = 3;
+    const WARN      = 4;
+    const NOTICE    = 5;
 }

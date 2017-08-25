@@ -212,10 +212,7 @@ class BaseServer
      */
     public function onShutdown($server)
     {
-        if($this->_isDebug)
-        {
-
-        }
+        $this->logger(LoggerLevel::ERROR, "Server was shutdown!!!");
     }
 
     /**
@@ -232,12 +229,10 @@ class BaseServer
         if (PHP_OS != 'Darwin') {
             swoole_set_process_name('GatewayServer_' . $this->_settings['svrName'] . '_worker_' . $workerId);
         }
-        
-        echo "WorkerStart: MasterPid={$server->master_pid}|Manager_pid={$server->manager_pid}|WorkerId={$server->worker_id}|WorkerPid={$server->worker_pid}".PHP_EOL;
-        if($this->_isDebug)
-        {
-            
-        }
+        $msg = "WorkerStart: MasterPid={$server->master_pid}|Manager_pid={$server->manager_pid}|WorkerId={$server->worker_id}|WorkerPid={$server->worker_pid}";
+        echo $msg.PHP_EOL;
+
+        $this->logger(LoggerLevel::INFO, $msg);
     }
 
     /**

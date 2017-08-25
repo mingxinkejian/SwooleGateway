@@ -18,16 +18,11 @@ namespace SwooleGateway\Server\Connection;
  */
 abstract class AConnection
 {
-    /**
-     * Id recorder.
-     *
-     * @var int
-     */
-    protected static $_idRecorder = 1;
-    protected $_id;
-    
-    public $id;     //此连接的唯一ID
-    public $fd;     //用来标记fdId，数组下标可用此做
+    //默认最大包长度
+    const MAX_PACK_LEN = 0x200000; //2M大小
+    const PACK_HEAD_LEN = 4;
+
+    public $fd;     //因为在底层可以保证fd的唯一性，此处fd即可做唯一标识即可
 
     public $server;
     public $socket;
@@ -54,5 +49,53 @@ abstract class AConnection
         }
         $swConnInfo = $server->connection_info($fd);
         return $swConnInfo;
+    }
+
+    public function close()
+    {
+        $this->server->close($this->fd);
+    }
+
+    public function send($data)
+    {
+        $dataBuff = $this->protocol->encode($data);
+        $dataLength = strlen($dataBuff);
+
+        $headerLength = pack("N", $dataLength);
+
+        if($dataLength <= self::MAX_PACK_LEN - self::PACK_HEAD_LEN)
+        {
+            return $this->sendToClient($this->fd, $headerLength . $dataBuff);    
+        }
+        else
+        {
+            $this->sendToClient($this->fd, $headerLength);
+
+            for ($i=0; $i < $dataLength; $i += self::MAX_PACK_LEN)
+            { 
+                if(!$this->sendToClient($this->fd, substr($dataBuff, $i,min($dataLength - $i, self::MAX_PACK_LEN) )))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    private function sendToClient($fd,$data)
+    {
+        if($fd != -1 && $this->server->exist($fd))
+        {
+            return $this->server->send($fd, $data);
+        }
+        else if ($fd == -1 && get_class($this->server) === 'swoole_client')
+        {
+            return $this->server->send($data);
+        }else
+        {
+            echo __FILE__ . PHP_EOL;
+        }
+        return false;
     }
 }

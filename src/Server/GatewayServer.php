@@ -30,6 +30,7 @@ class GatewayServer extends GatewayObject
      * @var [type]
      */
     private $_registerConnClient;
+    private $_registerConnection;
 
     private $_pingRegisterTimerId;
 
@@ -48,7 +49,6 @@ class GatewayServer extends GatewayObject
     private $_uIdClientConnections = array();
 
     private $_clientConnections = array();
-    private $_clientConnectionsByFd = array();
 
     private $_innerWorkerUri;
 
@@ -103,28 +103,21 @@ class GatewayServer extends GatewayObject
         $swConnInfo = $connection->getConnectionInfo();
         if(empty($swConnInfo))
         {
-            //连接不存在或已关闭，返回false，不做处理
+            //连接不存在或已关闭，返回，不做处理
             return;
         }
-
-        $connection->id = $this->generateConnectionId();
-        $connection->server = $connection->server;
-        $connection->socket = $connection->socket;
-        $connection->fromId = $connection->fromId;
-        $connection->fd = $connection->fd;
 
         $connection->userData->gatewayHeader = array(
             'localIp'       =>  ip2long($this->_server->getDefaultHost()),
             'localPort'     =>  $this->_innerWorkerUri['port'],
             'clientIp'      =>  ip2long($swConnInfo['remote_ip']),
             'clientPort'    =>  $swConnInfo['remote_port'],
-            'connectionId'  =>  $connection->id,
+            'connectionId'  =>  $connection->fd,
             'gatewayPort'   =>  $this->_server->getDefaultPort(),
             );
 
         //保存客户端连接对象
-        $this->_clientConnectionsByFd[$connection->fd] = $connection;
-        $this->_clientConnections[$connection->id] = $connection;
+        $this->_clientConnections[$connection->fd] = $connection;
 
         //把客户端连接转发给后端
         $this->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection);
@@ -138,19 +131,18 @@ class GatewayServer extends GatewayObject
     {
         echo 'onClose fd:' . $connection->fd . PHP_EOL;
 
-        if(!empty($this->_clientConnectionsByFd[$connection->fd]))
+        if(!empty($this->_clientConnections[$connection->fd]))
         {
             echo 'onClose clear connectionId fd:' . $connection->fd . PHP_EOL;
             //向Worker发送连接关闭的消息
             $this->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE,$connection);
             //清理连接
-            unset($this->_clientConnectionsByFd[$connection->fd]);
-            unset($this->_clientConnections[$connection->id]);
+            unset($this->_clientConnections[$connection->fd]);
 
             //清理uId数据
             if(isset($connection->uId) && !empty($this->_uIdClientConnections[$connection->uId]))
             {
-                unset($this->_uIdClientConnections[$connection->uId][$connection->id]);
+                unset($this->_uIdClientConnections[$connection->uId][$connection->fd]);
                 if(empty($this->_uIdClientConnections[$connection->uId]))
                 {
                     unset($this->_uIdClientConnections[$connection->uId]);
@@ -190,10 +182,11 @@ class GatewayServer extends GatewayObject
         if($this->_workerConnections)
         {
             //根据路由规则，选择一个Worker把请求转发
+
             $workerConnection = $this->bindClientToWorker($connection,$cmd,$data);
             if(isset($workerConnection))
             {
-                $this->_server->sendToSocket($workerConnection->fd,$workerConnection->protocol->encode($gatewayData));
+                $workerConnection->send($gatewayData);
             }
         }
         else
@@ -210,27 +203,6 @@ class GatewayServer extends GatewayObject
             $clientConnection->workerKey = array_rand($this->_workerKeyConnections);
         }
         return $this->_workerKeyConnections[$clientConnection->workerKey];
-    }
-
-    /**
-     * 生成connection id
-     * @return int
-     */
-    protected function generateConnectionId()
-    {
-        $maxUnsignedInt = 4294967295;
-        if(self::$_connectionIdRecorder >= $maxUnsignedInt)
-        {
-            self::$_connectionIdRecorder = 0;
-        }
-        while(++self::$_connectionIdRecorder <= $maxUnsignedInt)
-        {
-            if(!isset($this->_clientConnections[self::$_connectionIdRecorder]))
-            {
-                break;
-            }
-        }
-        return self::$_connectionIdRecorder;
     }
 
     /*****************************************注册中心相关*********************************************************/
@@ -301,15 +273,21 @@ class GatewayServer extends GatewayObject
     public function onRegisterConnect($client)
     {
         echo '注册中心连接成功！' . PHP_EOL;
+        $this->_registerConnection = new TCPConnection();
+        $this->_registerConnection->protocol = new BinaryProtocol($this, -1, -1);
+        $this->_registerConnection->protocol->onReceivePkg = array($this,'onRegisterReceivePkg');
+        $this->_registerConnection->server = $client;
+        $this->_registerConnection->socket = -1;
+        $this->_registerConnection->fd = -1;
+        $this->_registerConnection->fromId = -1;
+        $this->_registerConnection->userData = new \stdClass();
 
         $scheme = $this->_innerWorkerUri;
         //连接成功后发送包通知
         $data['cmd'] = CmdDefine::CMD_GATEWAY_REGISTER_REQ;
         $data['address'] = $scheme['scheme'] . '://' . $scheme['host'] . ':' . $scheme['port'];
 
-        $protocol = new BinaryProtocol($client,-1,-1);
-        $dataBuffer = $protocol->encode(json_encode($data));
-        $client->send($dataBuffer);
+        $this->_registerConnection->send(json_encode($data));
 
         //注册定时器，定时发ping包,单位为ms
         $heartbeatTime = isset($this->_settings['heartbeatTime']) ? $this->_settings['heartbeatTime'] : 5;
@@ -321,7 +299,31 @@ class GatewayServer extends GatewayObject
 
     public function onRegisterReceive($client,$data)
     {
+        if(isset($this->_registerConnection))
+        {
+            $this->_registerConnection->protocol->fd = -1;
+            $this->_registerConnection->protocol->fromId = -1;
+            $this->_registerConnection->protocol->decode($this->_registerConnection, $data);
+        }
+        else
+        {
+            $this->_registerConnClient->close();
+            $this->_registerConnection = null;
+        }
+    }
 
+    public function onRegisterReceivePkg($connection,$context)
+    {
+        $msg = json_decode($context->userData->pkg,true);
+        echo $context->userData->pkg. PHP_EOL;
+        switch ($msg['cmd']) {
+            case CmdDefine::CMD_PONG:
+
+                break;
+            default:
+                # code...
+                break;
+        }
     }
     
     public function onRegisterClose($client)
@@ -383,7 +385,6 @@ class GatewayServer extends GatewayObject
 
         $connection = new TCPConnection();
         $connection->protocol = new GatewayWorkerProtocol($this,$fd,$server->worker_id);
-        $connection->id = $this->generateConnectionId();
         $connection->server = $server;
         $connection->socket = $fd;
         $connection->fromId = $fromId;
@@ -453,15 +454,21 @@ class GatewayServer extends GatewayObject
             return;
         }
         $connection->key = $key;
+        $this->_server->logger(LoggerLevel::INFO,'Worker连接 Key: ' . $key);
         $this->_workerKeyConnections[$key] = $connection;
     }
 
     public function sendDataFromWorkerToClient($connection, $msgPkg)
     {
-        $clientConnection = $this->_clientConnections[$msgPkg['connectionId']];
+        $key = $msgPkg['connectionId'];
+        if(!array_key_exists($key,  $this->_clientConnections))
+        {
+            return;
+        }
+        $clientConnection = $this->_clientConnections[$key];
         if(isset($clientConnection))
         {
-            $this->_server->sendToSocket($clientConnection->fd,$msgPkg['body']);
+            $clientConnection->send($msgPkg['body']);
         }
     }
 
@@ -493,12 +500,9 @@ class GatewayServer extends GatewayObject
         $pingData = GatewayWorkerProtocol::$emptyPkg;
         $pingData['cmd'] = CmdDefine::CMD_PING;
 
-        $protocol = new GatewayWorkerProtocol($this, -1, $this->_server->swServer->worker_id);
-        $dataBuffer = $protocol->encode($pingData);
-
         foreach($this->_workerConnections as $connection)
         {
-            $this->_server->sendToSocket($connection->fd, $dataBuffer);
+            $connection->send($pingData);
         }
     }
 

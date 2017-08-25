@@ -5,6 +5,11 @@
     "broadcastUri" : "udp://127.0.0.1:9999",
     "swooleConf" : "config/registerSwooleConf.json",
     "clusterMakerKey" : "GameID_1001",
+    "redisConf" : {
+        "host" : "127.0.0.1",
+        "port" : 6379,
+        "password" : "redis4.0.1"
+    },
     "logConfig" : {
         "logPath" : "/Users/p_tingjming/Documents/SwooleGateway/log/registerSvr",
         "isCache" : true,

@@ -27,7 +27,7 @@ use SwooleGateway\Server\GatewayServer;
 $confPath = $argv[1];
 
 if (empty($confPath)) {
-    echo "ConfigPath is null,Please check !";
+    echo "ConfigPath is null,Please check !" . PHP_EOL;
     return;
 }
 
@@ -37,13 +37,13 @@ $swooleConfig = array();
 $jsonReader = new JsonReader();
 $config = $jsonReader->parseConf($confPath);
 if (empty($config)) {
-    echo "Config is null,Please check !";
+    echo "Config is null,Please check !" . PHP_EOL;
     return;
 }
 
 $swooleConfig = $jsonReader->parseConf(RunRoot . $config['swooleConf']);
 if (empty($config)) {
-    echo "Swoole Config is null,Please check !";
+    echo "Swoole Config is null,Please check !" . PHP_EOL;
     return;
 }
 

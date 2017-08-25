@@ -11,15 +11,19 @@
 # @link      xxxx
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
-namespace SwooleGateway\Server\Connection;
+namespace SwooleGateway\Logger\ILogger;
 
-/**
-* 用来保存连接信息
-*/
-class TCPConnection extends AConnection
+interface ILogger
 {
+    public function init($config);
 
-    function __construct()
-    {
-    }
+    public function debug($msg);
+
+    public function info($msg);
+
+    public function error($msg);
+
+    public function warn($msg);
+
+    public function notice($msg);
 }

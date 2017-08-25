@@ -24,12 +24,6 @@ class GatewayObject
     protected $_settings;
     protected $_swSettings;
 
-    /**
-     * connectionId 记录器
-     * @var int
-     */
-    protected static $_connectionIdRecorder = 0;
-
     public function parseConfig($config,$mode)
     {
         $scheme = parse_url($config['uri']);

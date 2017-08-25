@@ -59,11 +59,7 @@ class BinaryProtocol implements IProtocol
      */
     public function encode($data)
     {
-        $dataLength = strlen($data);
-
-        $headerLength = pack("N", $dataLength);
-
-        return $headerLength . $data;
+        return $data;
     }
     /**
      * 反序列化数据

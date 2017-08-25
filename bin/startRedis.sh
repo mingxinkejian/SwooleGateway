@@ -1,4 +1,3 @@
-<?php
 #
 # This file is part of SwooleGateway.
 #
@@ -11,15 +10,8 @@
 # @link      xxxx
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
-namespace SwooleGateway\Server\Connection;
 
-/**
-* 用来保存连接信息
-*/
-class TCPConnection extends AConnection
-{
+PHP_BIN=$(which redis-server)
 
-    function __construct()
-    {
-    }
-}
+# $PHP_BIN RegisterSvr_run.php ../config/registerConf_default.json
+/Applications/XAMPP/bin/redis-server ../config/redis.conf

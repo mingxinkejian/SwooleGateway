@@ -43,6 +43,7 @@ class WorkerServer extends GatewayObject
      */
     private $_gatewayAddresses = array();
     private $_gatewayConnection;
+    private $_gatewayConnectingAddress = '';
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
@@ -75,7 +76,7 @@ class WorkerServer extends GatewayObject
     public function onWorkerStart($server,$workerId)
     {
         // 注册gateway的内部通讯地址到register，worker 去连这个地址，以便 gateway 与 worker 之间建立起 TCP 长连接
-        $this->connectRegisterAddress($server,$workerId);
+        $this->connectRegisterAddress();
     }
 
     /**
@@ -115,29 +116,8 @@ class WorkerServer extends GatewayObject
 
     }
 
-    /**
-     * 生成connection id
-     * @return int
-     */
-    protected function generateConnectionId()
-    {
-        $maxUnsignedInt = 4294967295;
-        if(self::$_connectionIdRecorder >= $maxUnsignedInt)
-        {
-            self::$_connectionIdRecorder = 0;
-        }
-        while(++self::$_connectionIdRecorder <= $maxUnsignedInt)
-        {
-            if(!isset($this->_clientConnections[self::$_connectionIdRecorder]))
-            {
-                break;
-            }
-        }
-        return self::$_connectionIdRecorder;
-    }
-
     /*****************************************注册中心相关*********************************************************/
-    private function connectRegisterAddress($server,$workerId)
+    private function connectRegisterAddress()
     {
         $registData['cmd'] = CmdDefine::CMD_REGISTER_REQ_AND_RESP;
         $registData['key'] = $this->_settings['clusterMakerKey'];
@@ -152,7 +132,7 @@ class WorkerServer extends GatewayObject
         $recvData = $client->recv();
         if(is_bool($recvData) && $recvData == false)
         {
-            echo "注册中心连接失败！" . PHP_EOL;
+            $this->_server->logger(LoggerLevel::ERROR, '注册中心连接失败!');
             $this->closeServer();
         }
         else
@@ -163,25 +143,25 @@ class WorkerServer extends GatewayObject
                $md5 = md5($parseRecvData['cmd'] . $parseRecvData['key'] . $parseRecvData['uri']);
                if($md5 == $parseRecvData['md5'] && $parseRecvData['cmd'] == CmdDefine::CMD_REGISTER_REQ_AND_RESP)
                {
-                    echo '获取注册中心！ Address:' . $parseRecvData['uri'] . PHP_EOL;
-                    $this->connectToReisterServer($parseRecvData, $server, $workerId);
+                    $this->_server->logger(LoggerLevel::INFO, '获取注册中心！ Address:' . $parseRecvData['uri']);
+                    $this->connectToReisterServer($parseRecvData);
                }
                else
                {
-                    echo 'MD5 校验失败！Error:' . $parseRecvData['errMsg'] . PHP_EOL;
+                    $this->_server->logger(LoggerLevel::ERROR, 'MD5 校验失败！Error:' . $parseRecvData['errMsg']);
                     $this->closeServer();
                }
             }
             else
-           {
-                echo '数据解析失败！' . PHP_EOL;
+            {
+                $this->_server->logger(LoggerLevel::ERROR, '注册中心数据解析失败！recvPkg:' . $recvData);
                 $this->closeServer();
-           }
+            }
         }
     }
 
 
-    private function connectToReisterServer($urlData,$server,$workerId)
+    private function connectToReisterServer($urlData)
     {
         $scheme = parse_url($urlData['uri']);
         $this->_registerConnClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
@@ -203,7 +183,7 @@ class WorkerServer extends GatewayObject
 
     public function onRegisterConnect($client)
     {
-        echo '注册中心连接成功！' . PHP_EOL;
+        $this->_server->logger(LoggerLevel::INFO, '注册中心连接成功！');
 
         $scheme = parse_url($this->_settings['uri']);
         //连接成功后发送包通知
@@ -219,8 +199,7 @@ class WorkerServer extends GatewayObject
         $this->_registerConnection->fromId = -1;
         $this->_registerConnection->userData = new \stdClass();
 
-        $dataBuffer =  $this->_registerConnection->protocol->encode(json_encode($data));
-        $client->send($dataBuffer);
+        $this->_registerConnection->send(json_encode($data));
 
         //注册定时器，定时发ping包,单位为ms
         $heartbeatTime = isset($this->_settings['heartbeatTime']) ? $this->_settings['heartbeatTime'] : 5;
@@ -263,7 +242,7 @@ class WorkerServer extends GatewayObject
     
     public function onRegisterClose($client)
     {
-        echo '注册中心连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id . PHP_EOL;
+        $this->_server->logger(LoggerLevel::INFO, '注册中心连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id);
         $this->_registerConnClient = null;
 
         $this->_server->swServer->clearTimer($this->_pingRegisterTimerId);
@@ -286,7 +265,17 @@ class WorkerServer extends GatewayObject
         $this->_registerConnClient->send($buffer);
     }
 
-    public function registGateway($connection,$context)
+    public function tryConnectToRegister()
+    {
+
+    }
+
+
+
+    /*****************************************注册中心相关 END*********************************************************/
+
+    /*****************************************Gateway相关*********************************************************/
+        public function registGateway($connection,$context)
     {
         $msg = json_decode($context->userData->pkg,true);
         $this->_gatewayAddresses = array();
@@ -295,33 +284,39 @@ class WorkerServer extends GatewayObject
         {
             $this->_gatewayAddresses[$addr['address']] = $addr['address'];
         }
-
+        $this->_server->logger(LoggerLevel::DEBUG, json_encode($this->_gatewayAddresses));
         $this->checkGatewayConnections($this->_gatewayAddresses);
     }
     /**
      * 检查Gateway是否连接，未连接则尝试连接
-     * @param  [type] $addresses [description]
-     * @return [type]            [description]
+     * @param  [type]  $addresses [description]
+     * @param  boolean $isRetry   [description]
+     * @return [type]             [description]
      */
-    public function checkGatewayConnections($addresses)
+    public function checkGatewayConnections($addresses,$isRetry = false)
     {
         if(empty($addresses))
         {
             return;
         }
         $addrKey = array_rand($addresses,1);
-        $this->connectToGateway($addresses[$addrKey]);
+        $this->connectToGateway($addresses[$addrKey], $isRetry);
     }
 
-    public function connectToGateway($address)
+    public function connectToGateway($address,$isRetry = false)
     {
+        $this->_gatewayConnectingAddress = $address;
         $scheme = parse_url($address);
 
         if(empty($this->_gatewayConnection))
         {
-            $this->_server->logger(LoggerLevel::INFO, $address);
-
-            $this->_server->swServer->clearTimer($this->_tryToConnectGatewayTimerId);
+            if($this->_tryToConnectGatewayTimerId > 0)
+            {
+                $this->_server->swServer->clearTimer($this->_tryToConnectGatewayTimerId);
+                $this->_tryToConnectGatewayTimerId = -1;
+                $this->_server->logger(LoggerLevel::INFO, '网关连接重连成功！Address : ' .$address);
+            }
+            
             $gatewayClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
             $gatewayClient->set($this->_swSettings['clientConf']);
             //绑定和Gateway的相关回调
@@ -336,23 +331,19 @@ class WorkerServer extends GatewayObject
             $gatewayClient->connect($scheme['host'], $scheme['port']);
         }
     }
-    /*****************************************注册中心相关 END*********************************************************/
 
-    /*****************************************Gateway相关*********************************************************/
     public function onGatewayConnect($client)
     {
+        $this->_server->logger(LoggerLevel::INFO, '网关连接成功！Address : ' .$this->_gatewayConnectingAddress);
         //连接网关成功
-        $gatewayConnection = new TCPConnection();
-        $gatewayConnection->protocol = new GatewayWorkerProtocol($this, -1, -1);
-        $gatewayConnection->protocol->onReceivePkg = array($this,'onGatewayReceivePkg');
-        $gatewayConnection->server = $client;
-        $gatewayConnection->socket = -1;
-        $gatewayConnection->fd = -1;
-        $gatewayConnection->fromId = -1;
-        $gatewayConnection->userData = new \stdClass();
-        
-        $this->_gatewayConnection = $gatewayConnection;
-
+        $this->_gatewayConnection = new TCPConnection();
+        $this->_gatewayConnection->protocol = new GatewayWorkerProtocol($this, -1, -1);
+        $this->_gatewayConnection->protocol->onReceivePkg = array($this,'onGatewayReceivePkg');
+        $this->_gatewayConnection->server = $client;
+        $this->_gatewayConnection->socket = -1;
+        $this->_gatewayConnection->fd = -1;
+        $this->_gatewayConnection->fromId = -1;
+        $this->_gatewayConnection->userData = new \stdClass();
         //发送连接消息
         $workerId = $this->_server->swServer->worker_id;
         $connectionData = GatewayWorkerProtocol::$emptyPkg;
@@ -361,11 +352,7 @@ class WorkerServer extends GatewayObject
                 'workerKey' =>"WorkerServer:{$workerId}"
             ));
 
-        $dataBuffer = $gatewayConnection->protocol->encode($connectionData);
-        $dataLength = strlen($dataBuffer);
-        $headerLength = pack("N", $dataLength);
-
-        $client->send($headerLength . $dataBuffer);
+        $this->_gatewayConnection->send($connectionData);
     }
 
     public function onGatewayReceive($client,$data)
@@ -385,30 +372,26 @@ class WorkerServer extends GatewayObject
         {
             $pongData = GatewayWorkerProtocol::$emptyPkg;
             $pongData['cmd'] = CmdDefine::CMD_PONG;
-            $dataBuffer = $connection->protocol->encode($pongData);
-            $dataLength = strlen($dataBuffer);
-            $headerLength = pack("N", $dataLength);
 
-            $connection->server->send($headerLength . $dataBuffer);
+            $connection->send($pongData);
             return;
         }else if($cmd === CmdDefine::CMD_CLIENT_CONNECTION)
         {
             return;
         }
         /*以下为测试数据*/
-        $gatewayData                  = GatewayWorkerProtocol::$emptyPkg;
-        $gatewayData['cmd']           = CmdDefine::CMD_SEND_TO_ONE;
-        $gatewayData['connectionId'] = $context->userData->pkg['connectionId'];
-        $gatewayData['body']          = '收到一个完整Client数据包';
-        $dataBuffer = $connection->protocol->encode($gatewayData);
-        $dataLength = strlen($dataBuffer);
-        $headerLength = pack("N", $dataLength);
-        $connection->server->send($headerLength . $dataBuffer);
+        $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;
+        $gatewayData['cmd']             = CmdDefine::CMD_SEND_TO_ONE;
+        $gatewayData['connectionId']    = $context->userData->pkg['connectionId'];
+        $gatewayData['body']            = '收到一个完整Client数据包';
+
+        $connection->send($gatewayData);
     }
 
     public function onGatewayClose($client)
     {
-        echo '网关连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id . PHP_EOL;
+
+        $this->_server->logger(LoggerLevel::WARN, '网关连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id);
         $this->_gatewayConnection = null;
         
         $this->_tryToConnectGatewayTimerId = $this->_server->swServer->tick(5000, array($this, 'tryToConnectGateway'));
@@ -416,12 +399,12 @@ class WorkerServer extends GatewayObject
 
     public function onGatewayError($client)
     {
-        echo socket_strerror($client->errCode) . PHP_EOL;
+        $this->_server->logger(LoggerLevel::ERROR, 'onGatewayError:' . socket_strerror($client->errCode));
     }
 
     public function tryToConnectGateway()
     {
-        echo '网关连接关闭！tryToConnectGateway' . PHP_EOL;
+        $this->_server->logger(LoggerLevel::INFO, '网关连接关闭！ 正在重连！');
         $this->checkGatewayConnections($this->_gatewayAddresses);
     }
     /*****************************************Gateway相关 END*********************************************************/

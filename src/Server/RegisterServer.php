@@ -15,14 +15,17 @@
 namespace SwooleGateway\Server;
 
 use SwooleGateway\Common\CmdDefine;
+use SwooleGateway\Logger\LoggerLevel;
 /**
 * 注册中心服务器
 * 支持两种
 * socket和websocket
 * 注册中心因为没有什么负载压力，所以使用单进程处理
+* 为了可以开多进程，那么也只好用redis来保存连接信息啦
 */
 class RegisterServer extends GatewayObject
 {
+    private $_redis;
     /**
      * 所有Gateway的连接
      * @var array
@@ -50,6 +53,22 @@ class RegisterServer extends GatewayObject
         $this->_server->onAccept = array($this,'onAccept');
         $this->_server->onClose = array($this,'onClose');
         $this->_server->onReceivePkg = array($this,'onReceivePkg');
+        $this->_server->onWorkerStart = array($this, 'onWorkerStart');
+    }
+
+    public function onWorkerStart($server,$workerId)
+    {
+        $this->_redis = new \Redis();
+        //连接redis
+        $connResult = $this->_redis->pconnect($this->_settings['redisConf']['host'],$this->_settings['redisConf']['port']);
+        if($connResult && !empty($this->_settings['redisConf']['password']))
+        {
+            $this->_redis->auth($this->_settings['redisConf']['password']);
+        }
+        else
+        {
+            $this->_server->logger(LoggerLevel::ERROR,'Redis is connect failed!');
+        }
     }
 
     /**
@@ -70,7 +89,6 @@ class RegisterServer extends GatewayObject
     public function onAccept($connection)
     {
         // echo 'onAccept fd:' . $connection->fd . PHP_EOL;
-        // $this->_server->sendToSocket($connection->fd, 'hello Server!');
     }
 
     /**
@@ -82,14 +100,14 @@ class RegisterServer extends GatewayObject
     {
         echo 'onClose fd:' . $connection->fd . PHP_EOL;
         //剔除下线的服务器
-        if(isset($this->_gatewayConnections[$connection->id]))
+        if(isset($this->_gatewayConnections[$connection->fd]))
         {
-            unset($this->_gatewayConnections[$connection->id]);
+            unset($this->_gatewayConnections[$connection->fd]);
             $this->broadcastGatewayToWorker();
         }
-        if(isset($this->_workerConnections[$connection->id]))
+        if(isset($this->_workerConnections[$connection->fd]))
         {
-            unset($this->_workerConnections[$connection->id]);
+            unset($this->_workerConnections[$connection->fd]);
         }
     }
 
@@ -117,7 +135,7 @@ class RegisterServer extends GatewayObject
         switch($recvData['cmd'])
         {
             case CmdDefine::CMD_PING:
-                $this->heartbeatOfPong($recvData, $context);
+                // $this->heartbeatOfPong($connection);
                 break;
             case CmdDefine::CMD_GATEWAY_REGISTER_REQ:
                 $this->registGateway($connection, $recvData, $context);
@@ -130,15 +148,17 @@ class RegisterServer extends GatewayObject
                 break;
         }
     }
+
     /**
      * 心跳包响应
-     * @param  [type] $context [description]
-     * @return [type]          [description]
+     * @param  [type] $connection [description]
+     * @param  [type] $context    [description]
+     * @return [type]             [description]
      */
-    private function heartbeatOfPong($dataPkg,$context)
+    private function heartbeatOfPong($connection)
     {
         $sendData['cmd'] = CmdDefine::CMD_PONG;
-        $this->_server->sendToSocket($context->fd, json_encode($sendData));
+        $connection->send(json_encode($sendData));
     }
 
     private function registGateway($connection,$dataPkg,$context)
@@ -146,7 +166,10 @@ class RegisterServer extends GatewayObject
         $connInfo = new \stdClass();
         $connInfo->fd = $connection->fd;
         $connInfo->address = $dataPkg['address'];
-        $this->_gatewayConnections[$connection->id] = $connInfo;
+        $connInfo->connection = $connection;
+
+        $this->_server->logger(LoggerLevel::INFO, "registGateway: " . $connInfo->address);
+        $this->_gatewayConnections[$connection->fd] = $connInfo;
         $this->broadcastGatewayToWorker();
     }
 
@@ -155,8 +178,10 @@ class RegisterServer extends GatewayObject
         $connInfo = new \stdClass();
         $connInfo->fd = $connection->fd;
         $connInfo->address = $dataPkg['address'];
-        $this->_workerConnections[$connection->id] = $connInfo;
+        $connInfo->connection = $connection;
 
+        $this->_server->logger(LoggerLevel::INFO, "registWorker: " . $connInfo->address);
+        $this->_workerConnections[$connection->fd] = $connInfo;
         $this->broadcastGatewayToWorker($connection);
     }
 
@@ -244,7 +269,7 @@ class RegisterServer extends GatewayObject
      * 每次Gateway连接注册中心时广播一次
      * @return [type] [description]
      */
-    public function broadcastGatewayToWorker($connection = null)
+    public function broadcastGatewayToWorker($workerConnection = null)
     {
         $data['cmd'] = CmdDefine::CMD_BROADCAST_GATEWAYS;
         $data['gateways'] = array();
@@ -255,16 +280,17 @@ class RegisterServer extends GatewayObject
             $gateway['address'] = $value->address;
             array_push($data['gateways'], $gateway);
         }
+        $addressData = json_encode($data);
 
-        if($connection != null)
+        if($workerConnection != null)
         {
-            $this->_server->sendToSocket($connection->fd,json_encode($data));
+            $workerConnection->send($addressData);
             return;
         }
 
         foreach($this->_workerConnections as $value)
         {
-            $this->_server->sendToSocket($value->fd,json_encode($data));
+            $value->connection->send($addressData);
         }
     }
 }
