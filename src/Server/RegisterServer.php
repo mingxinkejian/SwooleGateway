@@ -25,17 +25,16 @@ use SwooleGateway\Logger\LoggerLevel;
 */
 class RegisterServer extends GatewayObject
 {
-    private $_redis;
     /**
      * 所有Gateway的连接
      * @var array
      */
-    protected $_gatewayConnections = array();
+    public $_gatewayConnections = array();
     /**
      * 所有worker的连接
      * @var array
      */
-    protected $_workerConnections = array();
+    public $_workerConnections = array();
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
@@ -58,18 +57,9 @@ class RegisterServer extends GatewayObject
 
     public function onWorkerStart($server,$workerId)
     {
-        $this->_redis = new \Redis();
-        //连接redis
-        $connResult = $this->_redis->pconnect($this->_settings['redisConf']['host'],$this->_settings['redisConf']['port']);
-        if($connResult && !empty($this->_settings['redisConf']['password']))
-        {
-            $this->_redis->auth($this->_settings['redisConf']['password']);
-        }
-        else
-        {
-            $this->_server->logger(LoggerLevel::ERROR,'Redis is connect failed!');
-        }
+
     }
+
 
     /**
      * 服务器启动回调

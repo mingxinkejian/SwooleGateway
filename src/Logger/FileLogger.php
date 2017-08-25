@@ -144,24 +144,29 @@ class FileLogger implements ILogger
         $class = '';
         $line = 0;
         $trace = debug_backtrace();
-        if (isset($trace[2])) {
+        if(isset($trace[2]))
+        {
             $file = $trace[1]['file'];
             $func = $trace[2]['function'];
-            if ((substr($func, 0, 7) == 'include') || (substr($func, 0, 7) == 'require')) {
+            if((substr($func, 0, 7) == 'include') || (substr($func, 0, 7) == 'require'))
+            {
                 $func = '';
             }
             $line = $trace[2]['line'];
-        } else if (isset($trace[1])) {
+        }else if (isset($trace[1]))
+        {
             $file = $trace[1]['file'];
             $func = '';
             $line = $trace[1]['line'];
         }
-        if (isset($trace[3]['class'])) {
+        if(isset($trace[3]['class']))
+        {
             $class = $trace[3]['class'];
             $func = $trace[3]['function'];
             $file = $trace[2]['file'];
             $line = $trace[2]['line'];
-        } else if (isset($trace[2]['class'])) {
+        }else if (isset($trace[2]['class']))
+        {
             $class = $trace[2]['class'];
             $func = $trace[2]['function'];
             $file = $trace[1]['file'];
@@ -172,7 +177,7 @@ class FileLogger implements ILogger
             $file = basename($file);
         }
 
-        $info = ' |' . $file . ' Line: ' . $line . '| ';
+        $info = ' [' . $file . ' Line: ' . $line . '] ';
         return $info;
     }
 }

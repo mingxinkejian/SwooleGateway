@@ -20,11 +20,14 @@ use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Protocols\BinaryProtocol;
 use SwooleGateway\Server\Connection\TCPConnection;
 use SwooleGateway\Logger\LoggerLevel;
+use Logic\WorkerLogic;
+use SwooleGateway\Server\Context\Context;
 /**
 * 
 */
 class WorkerServer extends GatewayObject
 {
+    public $_redis;
     /**
      * 注册中心信息
      * @var [type]
@@ -33,9 +36,9 @@ class WorkerServer extends GatewayObject
     private $_registerConnection;
 
     private $_pingRegisterTimerId;
+    private $_tryToConnectRegisterTimerId = -1;
 
     private $_pingWorkerTimerId;
-
     private $_tryToConnectGatewayTimerId = -1;
     /**
      * 保存网关信息
@@ -57,9 +60,10 @@ class WorkerServer extends GatewayObject
 
         $this->_server->onStart = array($this, 'onStart');
         $this->_server->onWorkerStart = array($this, 'onWorkerStart');
-        $this->_server->onAccept = array($this, 'onAccept');
-        $this->_server->onClose = array($this, 'onClose');
-        $this->_server->onReceivePkg = array($this, 'onReceivePkg');
+        // worker中不需要
+        // $this->_server->onAccept = array($this, 'onAccept');
+        // $this->_server->onClose = array($this, 'onClose');
+        // $this->_server->onReceivePkg = array($this, 'onReceivePkg');
     }
 
     /**
@@ -75,45 +79,9 @@ class WorkerServer extends GatewayObject
 
     public function onWorkerStart($server,$workerId)
     {
+        WorkerLogic::onServerStart($this);
         // 注册gateway的内部通讯地址到register，worker 去连这个地址，以便 gateway 与 worker 之间建立起 TCP 长连接
         $this->connectRegisterAddress();
-    }
-
-    /**
-     * 收到完整Client连接
-     * @param  [type] $connection [description]
-     * @return [type]          [description]
-     */
-    public function onAccept($connection)
-    {
-
-    }
-    /**
-     * 收到客户端关闭信息
-     * @param  [type] $connection [description]
-     * @return [type]          [description]
-     */
-    public function onClose($connection)
-    {
-
-    }
-
-    /**
-     *  收到一个完整Client数据包
-     *  $context = new \stdClass();
-     *  $context->server = $server;
-     *  $context->socket = $fd;
-     *  $context->fd = $fd;
-     *  $context->fromId = $fromId;
-     *  $context->userData = new \stdClass();
-     *  $context->userData->pkg = $data;
-     * @param  [type] $connection [description]
-     * @param  [type] $context [description]
-     * @return [type]          [description]
-     */
-    public function onReceivePkg($connection,$context)
-    {
-
     }
 
     /*****************************************注册中心相关*********************************************************/
@@ -206,7 +174,12 @@ class WorkerServer extends GatewayObject
         $heartbeatTime *= 1000;
         $this->_pingRegisterTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToRegister'));
 
-
+        if($this->_tryToConnectRegisterTimerId > 0)
+        {
+            $this->_server->swServer->clearTimer($this->_tryToConnectRegisterTimerId);
+            $this->_tryToConnectRegisterTimerId = -1;
+            $this->_server->logger(LoggerLevel::INFO, '注册中心连接重连成功！Address : ' . $this->_settings['uri']);
+        }
     }
 
     public function onRegisterReceive($client,$data)
@@ -246,12 +219,15 @@ class WorkerServer extends GatewayObject
         $this->_registerConnClient = null;
 
         $this->_server->swServer->clearTimer($this->_pingRegisterTimerId);
+
+        $this->_tryToConnectRegisterTimerId = $this->_server->swServer->$this->_server->swServer->tick(5000, array($this, 'tryConnectToRegister'));
     }
 
     public function onRegisterError($client)
     {
         $client->close();
         $this->_registerConnClient = null;
+        $this->_server->logger(LoggerLevel::ERROR, 'onGatewayError:' . socket_strerror($client->errCode));
     }
     /**
      * 向注册中心发送的心跳包为json格式
@@ -267,7 +243,8 @@ class WorkerServer extends GatewayObject
 
     public function tryConnectToRegister()
     {
-
+        $this->_server->logger(LoggerLevel::INFO, '注册中心连接关闭！ 正在重连！');
+        $this->connectRegisterAddress();
     }
 
 
@@ -275,7 +252,7 @@ class WorkerServer extends GatewayObject
     /*****************************************注册中心相关 END*********************************************************/
 
     /*****************************************Gateway相关*********************************************************/
-        public function registGateway($connection,$context)
+    public function registGateway($connection,$context)
     {
         $msg = json_decode($context->userData->pkg,true);
         $this->_gatewayAddresses = array();
@@ -375,17 +352,34 @@ class WorkerServer extends GatewayObject
 
             $connection->send($pongData);
             return;
-        }else if($cmd === CmdDefine::CMD_CLIENT_CONNECTION)
-        {
-            return;
         }
-        /*以下为测试数据*/
-        $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;
-        $gatewayData['cmd']             = CmdDefine::CMD_SEND_TO_ONE;
-        $gatewayData['connectionId']    = $context->userData->pkg['connectionId'];
-        $gatewayData['body']            = '收到一个完整Client数据包';
-
-        $connection->send($gatewayData);
+        //绑定上下文
+        Context::$WorkerServer      = $this;
+        Context::$clientIp          = $context->userData->pkg['clientIp'];
+        Context::$clientPort        = $context->userData->pkg['clientPort'];
+        Context::$localIp           = $context->userData->pkg['localIp'];
+        Context::$localPort         = $context->userData->pkg['localPort'];
+        Context::$connectionId      = $context->userData->pkg['connectionId'];
+        Context::$clientId          = Context::addressToClientId(Context::$localIp,Context::$localPort,Context::$connectionId);
+        Context::$connection        = $connection;
+        //绑定数据根据cmd来调用不同接口
+        switch($cmd)
+        {
+            case CmdDefine::CMD_CLIENT_CONNECTION:
+                WorkerLogic::clientConnect();
+                break;
+            case CmdDefine::CMD_CLIENT_MESSAGE:
+                WorkerLogic::clientMessage($context->userData->pkg['body']);
+                break;
+            case CmdDefine::CMD_CLIENT_CLOSE:
+                WorkerLogic::clientClose();
+                break;
+            default:
+                 
+                break;
+        }
+        //清除上下文
+        Context::clearContext();
     }
 
     public function onGatewayClose($client)

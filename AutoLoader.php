@@ -47,19 +47,30 @@ class AutoLoader
     public static function loadByNamespace($name)
     {
         $class_path = str_replace('\\', DIRECTORY_SEPARATOR, $name);
-        if (strpos($name, 'SwooleGateway\\') === 0) {
+        if(strpos($name, 'SwooleGateway\\') === 0)
+        {
             $class_file = __DIR__ . DIRECTORY_SEPARATOR . 'src' . substr($class_path, strlen('SwooleGateway')) . '.php';
-        } else {
-            if (self::$_autoloadRootPath) {
+        }
+        else if(strpos($name, 'Logic\\') === 0)
+        {
+            $class_file = __DIR__ . DIRECTORY_SEPARATOR . 'logic' . substr($class_path, strlen('Logic')) . '.php';
+        }
+        else
+        {
+            if(self::$_autoloadRootPath)
+            {
                 $class_file = self::$_autoloadRootPath . DIRECTORY_SEPARATOR . $class_path . '.php';
             }
-            if (empty($class_file) || !is_file($class_file)) {
+            if(empty($class_file) || !is_file($class_file))
+            {
                 $class_file = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . "$class_path.php";
             }
         }
-        if (is_file($class_file)) {
+        if(is_file($class_file))
+        {
             require_once($class_file);
-            if (class_exists($name, false)) {
+            if(class_exists($name, false))
+            {
                 return true;
             }
         }

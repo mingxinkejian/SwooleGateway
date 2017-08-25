@@ -20,9 +20,9 @@ namespace SwooleGateway\Server;
 */
 class GatewayObject
 {
-    protected $_server;
-    protected $_settings;
-    protected $_swSettings;
+    public $_server;
+    public $_settings;
+    public $_swSettings;
 
     public function parseConfig($config,$mode)
     {
