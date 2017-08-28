@@ -1,32 +1,9 @@
 <?php
-function get_caller_info() {
-        $c = '';
-        $file = '';
-        $func = '';
-        $class = '';
-        $trace = debug_backtrace();
-        if (isset($trace[2])) {
-            $file = $trace[1]['file'];
-            $func = $trace[2]['function'];
-            if ((substr($func, 0, 7) == 'include') || (substr($func, 0, 7) == 'require')) {
-                $func = '';
-            }
-        } else if (isset($trace[1])) {
-            $file = $trace[1]['file'];
-            $func = '';
-        }
-        if (isset($trace[3]['class'])) {
-            $class = $trace[3]['class'];
-            $func = $trace[3]['function'];
-            $file = $trace[2]['file'];
-        } else if (isset($trace[2]['class'])) {
-            $class = $trace[2]['class'];
-            $func = $trace[2]['function'];
-            $file = $trace[1]['file'];
-        }
-        if ($file != '') $file = basename($file);
-        $c = $file . ": ";
-        $c .= ($class != '') ? ":" . $class . "->" : "";
-        $c .= ($func != '') ? $func . "(): " : "";
-        return($c);
-    }
+$data2 = pack("N",1000) . '{"swooleClient":"测试发送包到网关服务器"}';
+
+echo 'send data len:' . strlen($data2) . PHP_EOL;
+$pkg2 = pack("N",strlen($data2)) . $data2;
+
+// var_dump(unpack("NmsgId", $pack));
+
+var_dump(bin2hex($pkg2));

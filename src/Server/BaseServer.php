@@ -176,7 +176,7 @@ class BaseServer
         echo "\033[2J";
         echo "\033[1A\n\033[K-------------\033[47;30m SWOOLE_GATEWAY \033[0m--------------\n\033[0m";
         echo 'System:', PHP_OS, "\n";
-        echo 'SwooleGateway version:', $version['Version'], "\n";
+        echo 'SwooleGateway version: ', $version['Version'], "\n";
         echo 'Swoole version: ', SWOOLE_VERSION, "\n";
         echo 'PHP version: ', PHP_VERSION, "\n";
         echo 'worker_num: ', $this->_swSettings['svrConf']['worker_num'], "\n";

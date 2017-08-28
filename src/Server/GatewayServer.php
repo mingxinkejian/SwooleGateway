@@ -456,6 +456,10 @@ class GatewayServer extends GatewayObject
         $connection->key = $key;
         $this->_server->logger(LoggerLevel::INFO,'Worker连接 Key: ' . $key);
         $this->_workerKeyConnections[$key] = $connection;
+
+        $respData = GatewayWorkerProtocol::$emptyPkg;
+        $respData['cmd'] = CmdDefine::CMD_WORKER_GATEWAY_RESP;
+        $connection->send($respData);
     }
 
     public function sendDataFromWorkerToClient($connection, $msgPkg)

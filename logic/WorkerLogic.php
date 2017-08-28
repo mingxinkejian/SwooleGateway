@@ -17,6 +17,8 @@ namespace Logic;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Context\Context;
 use SwooleGateway\Common\CmdDefine;
+use Logic\LogicManager\ServerManager;
+use SwooleGateway\Logger\LoggerLevel;
 /**
 * 
 */
@@ -28,21 +30,34 @@ class WorkerLogic
      */
     public static function onServerStart($server)
     {
-
+        //消息处理注册到管理器中
+        ServerManager::getInstance()->registerMsgHandlerMapper();
     }
 
     public static function clientConnect()
     {
+
     }
 
     public static function clientMessage($msgPkg)
     {
-        $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;
-        $gatewayData['cmd']             = CmdDefine::CMD_SEND_TO_ONE;
-        $gatewayData['connectionId']    = Context::$connectionId;
-        $gatewayData['body']            = json_decode($msgPkg,true)['swooleClient'];
+        $msgId = unpack("NmsgId", substr($msgPkg, 0,4));
+        $handler = ServerManager::getInstance()->getMsgHandler($msgId['msgId']);
+        if(!empty($handler))
+        {
+            $handler->handlerMsg($msgPkg);
+        }
+        else
+        {
+            Context::$workerServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$msgId['msgId']}]的MsgHandler");
+        }
 
-        Context::$connection->send($gatewayData);
+        // $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;
+        // $gatewayData['cmd']             = CmdDefine::CMD_SEND_TO_ONE;
+        // $gatewayData['connectionId']    = Context::$connectionId;
+        // $gatewayData['body']            = json_decode($msgPkg,true)['swooleClient'];
+
+        // Context::$connection->send($gatewayData);
     }
 
     public static function clientClose()

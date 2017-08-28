@@ -27,7 +27,6 @@ use SwooleGateway\Server\Context\Context;
 */
 class WorkerServer extends GatewayObject
 {
-    public $_redis;
     /**
      * 注册中心信息
      * @var [type]
@@ -220,7 +219,7 @@ class WorkerServer extends GatewayObject
 
         $this->_server->swServer->clearTimer($this->_pingRegisterTimerId);
 
-        $this->_tryToConnectRegisterTimerId = $this->_server->swServer->$this->_server->swServer->tick(5000, array($this, 'tryConnectToRegister'));
+        $this->_tryToConnectRegisterTimerId = $this->_server->swServer->tick(5000, array($this, 'tryConnectToRegister'));
     }
 
     public function onRegisterError($client)
@@ -352,9 +351,13 @@ class WorkerServer extends GatewayObject
 
             $connection->send($pongData);
             return;
+        }else if($cmd === CmdDefine::CMD_WORKER_GATEWAY_RESP)
+        {
+            $this->_server->logger(LoggerLevel::INFO,"网关连接确认！！！");
+            return;
         }
         //绑定上下文
-        Context::$WorkerServer      = $this;
+        Context::$workerServer      = $this;
         Context::$clientIp          = $context->userData->pkg['clientIp'];
         Context::$clientPort        = $context->userData->pkg['clientPort'];
         Context::$localIp           = $context->userData->pkg['localIp'];

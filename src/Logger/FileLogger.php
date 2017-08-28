@@ -40,6 +40,8 @@ class FileLogger implements ILogger
         $this->_isCache = $config['logConfig']['isCache'];
         $this->_logLevel = $config['logConfig']['logLevel'];
         $this->checkAllDir();
+
+        ServerException::initException($this);
     }
 
     private function checkAllDir()
@@ -78,8 +80,8 @@ class FileLogger implements ILogger
 
     public function debug($msg)
     {
-        $destination = $this->_debugPath . DIRECTORY_SEPARATOR . date( 'y_m_d_' ) . '.log';
-        $logMsg = '[DEBUG]' . date('c') . $this->getTrace() . $msg . "\n";
+        $destination = $this->_debugPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
+        $logMsg = '[DEBUG]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
         if($this->_isCache)
         {
             $this->_cacheQueue[] = $logMsg;
@@ -90,7 +92,7 @@ class FileLogger implements ILogger
     public function info($msg)
     {
         $destination = $this->_infoPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[INFO]' . date('c') . $this->getTrace() . $msg . "\n";
+        $logMsg = '[INFO]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
         if($this->_isCache)
         {
             $this->_cacheQueue[] = $logMsg;
@@ -101,7 +103,7 @@ class FileLogger implements ILogger
     public function error($msg)
     {
         $destination = $this->_errorPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[ERROR]' . date('c') . $this->getTrace() . $msg . "\n";
+        $logMsg = '[ERROR]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
         if($this->_isCache)
         {
             $this->_cacheQueue[] = $logMsg;
@@ -112,7 +114,7 @@ class FileLogger implements ILogger
     public function warn($msg)
     {
         $destination = $this->_warnPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[WARN]' . date('c') . $this->getTrace() . $msg . "\n";
+        $logMsg = '[WARN]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
         if($this->_isCache)
         {
             $this->_cacheQueue[] = $logMsg;
@@ -123,7 +125,7 @@ class FileLogger implements ILogger
     public function notice($msg)
     {
         $destination = $this->_noticePath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[NOTICE]' . date('c') . $this->getTrace() . $msg . "\n";
+        $logMsg = '[NOTICE]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
         if($this->_isCache)
         {
             $this->_cacheQueue[] = $logMsg;
@@ -136,48 +138,48 @@ class FileLogger implements ILogger
         error_log($msg, 3, $path);
     }
 
-    private function getTrace()
-    {
-        $info = '';
-        $file = '';
-        $func = '';
-        $class = '';
-        $line = 0;
-        $trace = debug_backtrace();
-        if(isset($trace[2]))
-        {
-            $file = $trace[1]['file'];
-            $func = $trace[2]['function'];
-            if((substr($func, 0, 7) == 'include') || (substr($func, 0, 7) == 'require'))
-            {
-                $func = '';
-            }
-            $line = $trace[2]['line'];
-        }else if (isset($trace[1]))
-        {
-            $file = $trace[1]['file'];
-            $func = '';
-            $line = $trace[1]['line'];
-        }
-        if(isset($trace[3]['class']))
-        {
-            $class = $trace[3]['class'];
-            $func = $trace[3]['function'];
-            $file = $trace[2]['file'];
-            $line = $trace[2]['line'];
-        }else if (isset($trace[2]['class']))
-        {
-            $class = $trace[2]['class'];
-            $func = $trace[2]['function'];
-            $file = $trace[1]['file'];
-            $line = $trace[2]['line'];
-        }
-        if($file != '')
-        {
-            $file = basename($file);
-        }
+    // private function getTrace()
+    // {
+    //     $info = '';
+    //     $file = '';
+    //     $func = '';
+    //     $class = '';
+    //     $line = 0;
+    //     $trace = debug_backtrace();
+    //     if(isset($trace[2]))
+    //     {
+    //         $file = $trace[1]['file'];
+    //         $func = $trace[2]['function'];
+    //         if((substr($func, 0, 7) == 'include') || (substr($func, 0, 7) == 'require'))
+    //         {
+    //             $func = '';
+    //         }
+    //         $line = $trace[2]['line'];
+    //     }else if (isset($trace[1]))
+    //     {
+    //         $file = $trace[1]['file'];
+    //         $func = '';
+    //         $line = $trace[1]['line'];
+    //     }
+    //     if(isset($trace[3]['class']))
+    //     {
+    //         $class = $trace[3]['class'];
+    //         $func = $trace[3]['function'];
+    //         $file = $trace[2]['file'];
+    //         $line = $trace[2]['line'];
+    //     }else if (isset($trace[2]['class']))
+    //     {
+    //         $class = $trace[2]['class'];
+    //         $func = $trace[2]['function'];
+    //         $file = $trace[1]['file'];
+    //         $line = $trace[2]['line'];
+    //     }
+    //     if($file != '')
+    //     {
+    //         $file = basename($file);
+    //     }
 
-        $info = ' [' . $file . ' Line: ' . $line . '] ';
-        return $info;
-    }
+    //     $info = ' [' . $file . ' Line: ' . $line . '] ';
+    //     return $info;
+    // }
 }
