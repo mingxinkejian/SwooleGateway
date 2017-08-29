@@ -16,13 +16,28 @@ namespace SwooleGateway\Logger;
 
 use SwooleGateway\Logger\ILogger\ILogger;
 /**
-* 
-*/
+ * 
+ * 使用.=符号来拼接字符串效率最高
+ * 此处队列性能也很高
+ * 测试数据100w条数据，从入队到拼接字符串到出队一共耗时0.242539 s
+ * 测试环境：
+ * PHP:     PHP7.1.4
+ * Memory:  12GB
+ * CPU:     2.5 GHz Intel Core i5
+ * OS:      MacOs 10.12.5
+ * 固态硬盘
+ */
 class FileLogger implements ILogger
 {
     private $_baseLogPath = '';
     private $_isCache = false;
-    private $_cacheQueue = array();
+    
+    private $_cacheDebugQueue;
+    private $_cacheInfoQueue;
+    private $_cacheErrorQueue;
+    private $_cacheWarnQueue;
+    private $_cacheNoticeQueue;
+
     private $_cacheQueueMax = 0;
     private $_logLevel = 1;
 
@@ -39,7 +54,14 @@ class FileLogger implements ILogger
 
         $this->_isCache = $config['logConfig']['isCache'];
         $this->_logLevel = $config['logConfig']['logLevel'];
+        $this->_cacheQueueMax = $config['logConfig']['queueMax'];
         $this->checkAllDir();
+
+        $this->_cacheDebugQueue     = new \SplQueue();
+        $this->_cacheInfoQueue      = new \SplQueue();
+        $this->_cacheErrorQueue     = new \SplQueue();
+        $this->_cacheWarnQueue      = new \SplQueue();
+        $this->_cacheNoticeQueue    = new \SplQueue();
 
         ServerException::initException($this);
     }
@@ -80,62 +102,128 @@ class FileLogger implements ILogger
 
     public function debug($msg)
     {
+        if($this->_logLevel < LoggerLevel::DEBUG)
+        {
+            return;
+        }
         $destination = $this->_debugPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[DEBUG]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
+        $logMsg = '[DEBUG]' . date('Y-M-d H:i:s') . ' ' . $msg .PHP_EOL;
         if($this->_isCache)
         {
-            $this->_cacheQueue[] = $logMsg;
+            $this->cacheWriteLog($this->_cacheDebugQueue, $this->_debugPath, $destination, $logMsg);
+            return;
         }
+        $this->checkDir($this->_debugPath);
         $this->writeLog($destination,$logMsg);
     }
 
     public function info($msg)
     {
+        if($this->_logLevel < LoggerLevel::INFO)
+        {
+            return;
+        }
         $destination = $this->_infoPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[INFO]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
+        $logMsg = '[INFO]' . date('Y-M-d H:i:s') . ' ' . $msg . PHP_EOL;
         if($this->_isCache)
         {
-            $this->_cacheQueue[] = $logMsg;
+            $this->cacheWriteLog($this->_cacheInfoQueue, $this->_infoPath, $destination, $logMsg);
+            return;
         }
+        $this->checkDir($this->_infoPath);
         $this->writeLog($destination,$logMsg);
     }
 
     public function error($msg)
     {
+        if($this->_logLevel < LoggerLevel::ERROR)
+        {
+            return;
+        }
         $destination = $this->_errorPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[ERROR]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
+        $logMsg = '[ERROR]' . date('Y-M-d H:i:s') . ' ' . $msg . PHP_EOL;
         if($this->_isCache)
         {
-            $this->_cacheQueue[] = $logMsg;
+            $this->cacheWriteLog($this->_cacheErrorQueue, $this->_errorPath, $destination, $logMsg);
+            return;
         }
+        $this->checkDir($this->_errorPath);
         $this->writeLog($destination,$logMsg);
     }
 
     public function warn($msg)
     {
+        if($this->_logLevel < LoggerLevel::WARN)
+        {
+            return;
+        }
         $destination = $this->_warnPath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[WARN]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
+        $logMsg = '[WARN]' . date('Y-M-d H:i:s') . ' ' . $msg . PHP_EOL;
         if($this->_isCache)
         {
-            $this->_cacheQueue[] = $logMsg;
+            $this->cacheWriteLog($this->_cacheWarnQueue, $this->_warnPath, $destination, $logMsg);
+            return;
         }
+        $this->checkDir($this->_warnPath);
         $this->writeLog($destination,$logMsg);
     }
 
     public function notice($msg)
     {
+        if($this->_logLevel < LoggerLevel::NOTICE)
+        {
+            return;
+        }
         $destination = $this->_noticePath . DIRECTORY_SEPARATOR . date( 'y_m_d_H' ) . '.log';
-        $logMsg = '[NOTICE]' . date('Y-M-d H:i:s') . ' ' . $msg . "\n";
+        $logMsg = '[NOTICE]' . date('Y-M-d H:i:s') . ' ' . $msg . PHP_EOL;
         if($this->_isCache)
         {
-            $this->_cacheQueue[] = $logMsg;
+            $this->cacheWriteLog($this->_cacheNoticeQueue, $this->_noticePath, $destination, $logMsg);
+            return;
         }
+        $this->checkDir($this->_noticePath);
         $this->writeLog($destination,$logMsg);
     }
 
     private function writeLog($path,$msg)
     {
         error_log($msg, 3, $path);
+    }
+
+    public function flushAllLog()
+    {
+
+    }
+
+    private function cacheWriteLog($queue,$logPath,$destination,$logMsg)
+    {
+        $queue->enqueue($logMsg);
+        if($queue->count() >= $this->_cacheQueueMax)
+        {
+            $logAllMsg = '';
+            $queue->rewind();
+            while($queue->valid())
+            {
+                echo $queue->current() , PHP_EOL;
+                $logAllMsg .= $queue->current();
+                echo $logAllMsg;
+                $queue->next();
+                $queue->dequeue();
+            }
+            if(!empty($logAllMsg))
+            {
+                $this->checkDir($logPath);
+                $this->writeLog($destination,$logAllMsg);
+            }
+        }
+    }
+
+    private function checkDir($dir)
+    {
+        if(!file_exists($dir))
+        {
+            mkdir($dir,0777,true);
+        }
     }
 
     // private function getTrace()

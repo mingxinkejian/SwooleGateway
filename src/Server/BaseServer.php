@@ -161,11 +161,9 @@ class BaseServer
         //把pid写入run目录
 
         $masterPIdFile = 'run' . DIRECTORY_SEPARATOR . $this->_settings['svrName'] . '_master.pid';
-        $managerPIdFile = 'run' . DIRECTORY_SEPARATOR . $this->_settings['svrName'] . '_manager.pid';
 
         $fileIO = new FileIO();
         $fileIO->setWritePath(RunRoot . $masterPIdFile)->writeFile($server->master_pid)->create();
-        $fileIO->setWritePath(RunRoot . $managerPIdFile)->writeFile($server->manager_pid)->create();
 
         $this->displayUI();
     }

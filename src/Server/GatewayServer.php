@@ -97,7 +97,6 @@ class GatewayServer extends GatewayObject
      */
     public function onAccept($connection)
     {
-        echo 'onAccept fd:' . $connection->fd . PHP_EOL;
         $this->_server->logger(LoggerLevel::DEBUG,'onAccept fd:' . $connection->fd);
         //获取客户端连接信息
         $swConnInfo = $connection->getConnectionInfo();
@@ -129,11 +128,8 @@ class GatewayServer extends GatewayObject
      */
     public function onClose($connection)
     {
-        echo 'onClose fd:' . $connection->fd . PHP_EOL;
-
         if(!empty($this->_clientConnections[$connection->fd]))
         {
-            echo 'onClose clear connectionId fd:' . $connection->fd . PHP_EOL;
             //向Worker发送连接关闭的消息
             $this->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE,$connection);
             //清理连接
@@ -435,6 +431,40 @@ class GatewayServer extends GatewayObject
                 break;
             case CmdDefine::CMD_SEND_TO_ONE:
                 $this->sendDataFromWorkerToClient($connection, $msgPkg);
+                break;
+            case CmdDefine::CMD_KICK:
+                break;
+            case CmdDefine::CMD_DESTROY:
+                break;
+            case CmdDefine::CMD_SEND_TO_ALL:
+                break;
+            case CmdDefine::CMD_SET_SESSION:
+                break;
+            case CmdDefine::CMD_UPDATE_SESSION:
+                break;
+            case CmdDefine::CMD_GET_SESSION_BY_CLIEND_ID:
+                break;
+            case CmdDefine::CMD_GET_ALL_CLIENT_INFO:
+                break;
+            case CmdDefine::CMD_IS_ONLINE:
+                break;
+            case CmdDefine::CMD_BIND_UID:
+                break;
+            case CmdDefine::CMD_UNBIND_UID:
+                break;
+            case CmdDefine::CMD_SEND_TO_UID:
+                break;
+            case CmdDefine::CMD_JOIN_GROUP:
+                break;
+            case CmdDefine::CMD_LEAVE_GROUP:
+                break;
+            case CmdDefine::CMD_SEND_TO_GROUP:
+                break;
+            case CmdDefine::CMD_GET_CLIENT_INFO_BY_GROUP:
+                break;
+            case CmdDefine::CMD_GET_CLIENT_COUNT_BY_GROUP:
+                break;
+            case CmdDefine::CMD_GET_CLIENT_ID_BY_UID:
                 break;
             default:
 

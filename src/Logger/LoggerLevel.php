@@ -16,9 +16,9 @@ namespace SwooleGateway\Logger;
 
 class LoggerLevel
 {
-    const DEBUG     = 1;
-    const INFO      = 2;
-    const ERROR     = 3;
-    const WARN      = 4;
-    const NOTICE    = 5;
+    const DEBUG     = 0x01;
+    const INFO      = 0x02;
+    const ERROR     = 0x03;
+    const WARN      = 0x04;
+    const NOTICE    = 0x05;
 }
