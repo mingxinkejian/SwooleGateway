@@ -217,7 +217,7 @@ class GatewayServer extends GatewayObject
         $recvData = $client->recv();
         if(is_bool($recvData) && $recvData == false)
         {
-            echo "注册中心连接失败！" . PHP_EOL;
+            $this->_server->logger(LoggerLevel::NOTICE, '注册中心连接失败！');
             $this->closeServer();
         }
         else
@@ -228,18 +228,18 @@ class GatewayServer extends GatewayObject
                $md5 = md5($parseRecvData['cmd'] . $parseRecvData['key'] . $parseRecvData['uri']);
                if($md5 == $parseRecvData['md5'] && $parseRecvData['cmd'] == CmdDefine::CMD_REGISTER_REQ_AND_RESP)
                {
-                    echo '获取注册中心！ Address:' . $parseRecvData['uri'] . PHP_EOL;
+                    $this->_server->logger(LoggerLevel::NOTICE, '获取注册中心！ Address:' . $parseRecvData['uri']);
                     $this->connectToReisterServer($parseRecvData, $server, $workerId);
                }
                else
                {
-                    echo 'MD5 校验失败！Error:' . $parseRecvData['errMsg'] . PHP_EOL;
+                    $this->_server->logger(LoggerLevel::NOTICE, 'MD5 校验失败！Error:' . $parseRecvData['errMsg']);
                     $this->closeServer();
                }
             }
             else
            {
-                echo '数据解析失败！' . PHP_EOL;
+                $this->_server->logger(LoggerLevel::NOTICE, '数据解析失败！');
                 $this->closeServer();
            }
         }
@@ -268,7 +268,6 @@ class GatewayServer extends GatewayObject
 
     public function onRegisterConnect($client)
     {
-        echo '注册中心连接成功！' . PHP_EOL;
         $this->_registerConnection = new TCPConnection();
         $this->_registerConnection->protocol = new BinaryProtocol($this, -1, -1);
         $this->_registerConnection->protocol->onReceivePkg = array($this,'onRegisterReceivePkg');
@@ -311,7 +310,6 @@ class GatewayServer extends GatewayObject
     public function onRegisterReceivePkg($connection,$context)
     {
         $msg = json_decode($context->userData->pkg,true);
-        echo $context->userData->pkg. PHP_EOL;
         switch ($msg['cmd']) {
             case CmdDefine::CMD_PONG:
 
@@ -324,7 +322,7 @@ class GatewayServer extends GatewayObject
     
     public function onRegisterClose($client)
     {
-        echo '注册中心连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id . PHP_EOL;
+        $this->_server->logger(LoggerLevel::ERROR, '注册中心连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id);
         $this->_registerConnClient = null;
 
         $this->_server->swServer->clearTimer($this->_pingRegisterTimerId);
@@ -343,9 +341,7 @@ class GatewayServer extends GatewayObject
     {
         $pingData['cmd'] = CmdDefine::CMD_PING;
         $data = json_encode($pingData);
-        $dataLength = strlen($data);
-        $headerLength = pack("N", $dataLength);
-        $this->_registerConnClient->send($headerLength . $data);
+        $this->_registerConnection->send($data);
     }
 
 

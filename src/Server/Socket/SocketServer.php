@@ -191,6 +191,8 @@ class SocketServer extends BaseServer
         $server->on("receive", array($this, 'onReceive'));
         $server->on("start", array($this, 'onStart'));
         $server->on('workerstart',array($this, 'onWorkerStart'));
+        $server->on('shutdown',array($this, 'onShutdown'));
+        
     }
 
     public function onStart($server)

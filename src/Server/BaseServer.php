@@ -210,7 +210,10 @@ class BaseServer
      */
     public function onShutdown($server)
     {
-        $this->logger(LoggerLevel::ERROR, "Server was shutdown!!!");
+        $this->logger(LoggerLevel::NOTICE, "Server was shutdown!!!");
+        $masterPIdFile = 'run' . DIRECTORY_SEPARATOR . $this->_settings['svrName'] . '_master.pid';
+        $fileIO = new FileIO();
+        $fileIO->setWritePath(RunRoot . $masterPIdFile)->delFile();
     }
 
     /**

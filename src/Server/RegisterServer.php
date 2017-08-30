@@ -78,7 +78,7 @@ class RegisterServer extends GatewayObject
      */
     public function onAccept($connection)
     {
-        // echo 'onAccept fd:' . $connection->fd . PHP_EOL;
+        
     }
 
     /**
@@ -88,7 +88,6 @@ class RegisterServer extends GatewayObject
      */
     public function onClose($connection)
     {
-        echo 'onClose fd:' . $connection->fd . PHP_EOL;
         //剔除下线的服务器
         if(isset($this->_gatewayConnections[$connection->fd]))
         {
@@ -125,7 +124,7 @@ class RegisterServer extends GatewayObject
         switch($recvData['cmd'])
         {
             case CmdDefine::CMD_PING:
-                // $this->heartbeatOfPong($connection);
+                $this->heartbeatOfPong($connection);
                 break;
             case CmdDefine::CMD_GATEWAY_REGISTER_REQ:
                 $this->registGateway($connection, $recvData, $context);

@@ -18,7 +18,7 @@ class LoggerLevel
 {
     const DEBUG     = 0x01;
     const INFO      = 0x02;
-    const ERROR     = 0x03;
-    const WARN      = 0x04;
-    const NOTICE    = 0x05;
+    const WARN      = 0x03;
+    const NOTICE    = 0x04;
+    const ERROR     = 0x05;
 }

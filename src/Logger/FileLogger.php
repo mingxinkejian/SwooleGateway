@@ -204,9 +204,7 @@ class FileLogger implements ILogger
             $queue->rewind();
             while($queue->valid())
             {
-                echo $queue->current() , PHP_EOL;
                 $logAllMsg .= $queue->current();
-                echo $logAllMsg;
                 $queue->next();
                 $queue->dequeue();
             }
