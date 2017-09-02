@@ -18,6 +18,5 @@ namespace SwooleGateway\Server\Connection;
 */
 class TCPConnection extends AConnection
 {
-    public $key;
-    public $groups;
+
 }

@@ -30,6 +30,10 @@ abstract class AConnection
     public $userData;
 
     public $protocol;
+    
+    public $key;
+    public $groups;
+    public $session;
 
     function __construct()
     {

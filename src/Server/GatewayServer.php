@@ -123,8 +123,9 @@ class GatewayServer extends GatewayObject
         //保存客户端连接对象
         $this->clientConnections[$connection->fd] = $connection;
 
-        //把客户端连接转发给后端
-        $this->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
+        //在此处处理客户端连接
+        GatewayLogic::onClientConnect($this, $connection);
+
     }
     /**
      * 收到客户端关闭信息
@@ -150,8 +151,17 @@ class GatewayServer extends GatewayObject
                 }
             }
             //清理group数据
-            //TO DO
-            //暂时未加入group列表
+            if(!empty($connection->groups))
+            {
+                foreach($connection->groups as $group)
+                {
+                    unset($this->groupConnections[$group][$connection->fd]);
+                    if(empty($this->groupConnections[$group]))
+                    {
+                        unset($this->groupConnections[$group]);
+                    }
+                }
+            }
         }
     }
 
@@ -170,7 +180,9 @@ class GatewayServer extends GatewayObject
      */
     public function onReceivePkg($connection,$context)
     {
-        $this->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
+        //在此处处理收到的包，拆包后处理是否转发
+        GatewayLogic::onClientConnect($this, $connection, $context);
+        
     }
 
     public function sendToWorker($cmd,$clientConntion,$gatewayHeader,$data = '')

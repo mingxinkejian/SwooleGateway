@@ -13,6 +13,7 @@
 #
 namespace Logic;
 
+use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Logger\LoggerLevel;
 /**
@@ -20,10 +21,22 @@ use SwooleGateway\Logger\LoggerLevel;
 */
 class GatewayLogic
 {
+    public static function onClientConnect($gatewayServer,$connection)
+    {
+        //把客户端连接转发给后端
+        $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
+    }
+
+    public static function onClientReceivePkg($gatewayServer,$connection,$context)
+    {
+        $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
+    }
+
     public static function onInnerWorkerReceivePkg($gatewayServer,$connection,$msgPkg)
     {
         $cmd = $msgPkg['cmd'];
-        switch ($cmd) {
+        switch($cmd)
+        {
             case CmdDefine::CMD_PONG:
                 break;
             case CmdDefine::CMD_WORKER_GATEWAY_REQ:
@@ -84,7 +97,9 @@ class GatewayLogic
                 self::getClientIdByUid($gatewayServer, $connection, $msgPkg);
                 break;
             default:
-
+                $errMsg = "gateway inner pack err cmd = {$cmd}";
+                throw new \Exception($errMsg);
+                
                 break;
         }
     }
@@ -134,17 +149,50 @@ class GatewayLogic
 
     private static function setSession($gatewayServer,$connection,$msgPkg)
     {
-
+        if(isset($gatewayServer->clientConnections[$msgPkg['connectionId']]))
+        {
+            $gatewayServer->clientConnections[$msgPkg['connectionId']]->session = $msgPkg['extData'];
+        }
     }
 
     private static function updateSession($gatewayServer,$connection,$msgPkg)
     {
-
+        if(!isset($gatewayServer->clientConnections[$msgPkg['connectionId']]))
+        {
+            return;
+        }
+        else
+        {
+            if(!$gatewayServer->clientConnections[$msgPkg['connectionId']]->session)
+            {
+                $gatewayServer->clientConnections[$msgPkg['connectionId']]->session = $msgPkg['extData'];
+                return;
+            }
+            $session = json_decode($this->clientConnections[$data['connectionId']]->session);
+            $sessionMerge = json_decode($data['extData']);
+            $session = array_merge($sessionMerge, $session);
+            $this->_clientConnections[$data['connection_id']]->session = json_encode($session);
+        }
     }
 
     private static function getSessionByClientId($gatewayServer,$connection,$msgPkg)
     {
-
+        if(!isset($gatewayServer->clientConnections[$msgPkg['connectionId']]))
+        {
+            $respData = json_encode(array());
+        }
+        else
+        {
+            if(!$gatewayServer->clientConnections[$msgPkg['connectionId']]->session)
+            {
+                $respData = json_encode(array());
+            }
+            else
+            {
+                $respData = json_encode($gatewayServer->clientConnections[$msgPkg['connectionId']]->session);
+            }
+        }
+        $connection->send(json_encode($respData));
     }
 
     private static function getAllClientInfo($gatewayServer,$connection,$msgPkg)
@@ -207,7 +255,7 @@ class GatewayLogic
             }
         }
         $clientConnection->uId                  = $uId;
-        $gatewayServer->[$uId][$connectionId]   = $clientConnection;
+        $gatewayServer->uIdClientConnections[$uId][$connectionId]   = $clientConnection;
 
         $respData = $clientConnection->userData->gatewayHeader;
         $respData['cmd'] = CmdDefine::CMD_BIND_UID;
@@ -286,21 +334,101 @@ class GatewayLogic
 
     private static function leaveGroup($gatewayServer,$connection,$msgPkg)
     {
+        $group = $msgPkg['extData'];
 
+        if(empty($group))
+        {
+            $gatewayServer->_server->logger(LoggerLevel::ERROR, 'leaveGroup group empty, group = ' . var_export($group,true));
+            return;
+        }
+
+        $connectionId = $msgPkg['connectionId'];
+        if(!isset($this->clientConnections[$connectionId]))
+        {
+            return;
+        }
+
+        $clientConnection = $this->clientConnections[$connectionId];
+        if(!isset($clientConnection->groups[$group]))
+        {
+            return;
+        }
+        unset($clientConnection->groups[$group]);
+        unset($gatewayServer->groupConnections[$group][$connectionId]);
     }
 
     private static function sendToGroup($gatewayServer,$connection,$msgPkg)
     {
+        $body = $msgPkg['$body'];
+        $extData = json_decode($msgPkg['extData'], true);
+        $groupArray = $extData['group'];
+        $excludeConnectionId = $extData['exclude'];
 
+        foreach($groupArray as $group)
+        {
+            if(!empty($this->groupConnections[$group]))
+            {
+                foreach($gatewayServer->groupConnections[$group] as $clientConnection)
+                {
+                    if(!isset($excludeConnectionId[$clientConnection->fd]))
+                    {
+                        $clientConnection->send($body);
+                    }
+                }
+            }
+        }
+    }
+
+    private static function getClientInfoByGroup($gatewayServer,$connection,$msgPkg)
+    {
+        $group = $msgPkg['extData'];
+        if(!isset($gatewayServer->groupConnections[$group]))
+        {
+            $respData = array();
+            $connection->send(json_encode($respData));
+            return;   
+        }
+        $clientInfoArray = array();
+
+        foreach($$gatewayServer->groupConnections[$group] as $connectionId => $clientConnection)
+        {
+            $clientInfoArray[$connectionId] = $clientConnection->session;
+        }
+
+        $connection->send(json_encode($clientInfoArray));
     }
 
     private static function getClientCountByGroup($gatewayServer,$connection,$msgPkg)
     {
+        $group = $msgPkg['extData'];
+        $count = 0;
+        if(!empty($group))
+        {
+            if(isset($gatewayServer->groupConnections[$group]))
+            {
+                $count = count($gatewayServer->groupConnections[$group]);
+            }
+        }else
+        {
+            $count = count($gatewayServer->clientConnections);
+        }
 
+        $connection->send($count);
     }
 
     private static function getClientIdByUid($gatewayServer,$connection,$msgPkg)
     {
+        $uId = $msgPkg['$extData'];
 
+        if(empty($gatewayServer->uIdClientConnections[$uId]))
+        {
+            $respData = json_encode(array());
+        }
+        else
+        {
+            $respData = json_encode(array_keys($this->uIdClientConnections[$uId]));
+        }
+
+        $connection->send($respData);
     }
 }
