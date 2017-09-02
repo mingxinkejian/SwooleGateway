@@ -5,6 +5,7 @@
     "broadcastUri" : "udp://0.0.0.0:9999",
     "swooleConf" : "config/workerSwooleConf.json",
     "clusterMakerKey" : "GameID_1001",
+    "gameSvrId" : 4096,
     "redisConf" : {
         "host" : "127.0.0.1",
         "port" : 6379,

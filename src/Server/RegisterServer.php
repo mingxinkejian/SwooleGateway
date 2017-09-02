@@ -34,7 +34,7 @@ class RegisterServer extends GatewayObject
      * 所有worker的连接
      * @var array
      */
-    public $_workerConnections = array();
+    public $workerConnections = array();
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
@@ -94,9 +94,9 @@ class RegisterServer extends GatewayObject
             unset($this->_gatewayConnections[$connection->fd]);
             $this->broadcastGatewayToWorker();
         }
-        if(isset($this->_workerConnections[$connection->fd]))
+        if(isset($this->workerConnections[$connection->fd]))
         {
-            unset($this->_workerConnections[$connection->fd]);
+            unset($this->workerConnections[$connection->fd]);
         }
     }
 
@@ -170,7 +170,7 @@ class RegisterServer extends GatewayObject
         $connInfo->connection = $connection;
 
         $this->_server->logger(LoggerLevel::INFO, "registWorker: " . $connInfo->address);
-        $this->_workerConnections[$connection->fd] = $connInfo;
+        $this->workerConnections[$connection->fd] = $connInfo;
         $this->broadcastGatewayToWorker($connection);
     }
 
@@ -277,7 +277,7 @@ class RegisterServer extends GatewayObject
             return;
         }
 
-        foreach($this->_workerConnections as $value)
+        foreach($this->workerConnections as $value)
         {
             $value->connection->send($addressData);
         }

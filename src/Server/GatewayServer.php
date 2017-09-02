@@ -20,6 +20,8 @@ use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Protocols\BinaryProtocol;
 use SwooleGateway\Server\Connection\TCPConnection;
 use SwooleGateway\Logger\LoggerLevel;
+use Logic\GatewayLogic;
+
 /**
 * 
 */
@@ -29,28 +31,31 @@ class GatewayServer extends GatewayObject
      * 注册中心信息
      * @var [type]
      */
-    private $_registerConnClient;
-    private $_registerConnection;
+    public $_registerConnClient;
+    public $_registerConnection;
 
-    private $_pingRegisterTimerId;
+    public $_pingRegisterTimerId;
 
-    private $_pingWorkerTimerId;
+    public $_pingWorkerTimerId;
     /**
      * 后端worker连接信息
      * @var [type]
      */
-    private $_workerConnections = array();
-    private $_workerKeyConnections = array();
+    public $workerConnections = array();
+    public $workerKeyConnections = array();
     /**
      * uId绑定connection信息
-     * 
+     * 每个uId可以绑定多个connection
+     * [uId][connection]
      * @var [type]
      */
-    private $_uIdClientConnections = array();
+    public $uIdClientConnections = array();
 
-    private $_clientConnections = array();
+    public $clientConnections = array();
 
-    private $_innerWorkerUri;
+    public $groupConnections = array();
+
+    public $_innerWorkerUri;
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
@@ -116,10 +121,10 @@ class GatewayServer extends GatewayObject
             );
 
         //保存客户端连接对象
-        $this->_clientConnections[$connection->fd] = $connection;
+        $this->clientConnections[$connection->fd] = $connection;
 
         //把客户端连接转发给后端
-        $this->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection);
+        $this->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
     }
     /**
      * 收到客户端关闭信息
@@ -128,20 +133,20 @@ class GatewayServer extends GatewayObject
      */
     public function onClose($connection)
     {
-        if(!empty($this->_clientConnections[$connection->fd]))
+        if(!empty($this->clientConnections[$connection->fd]))
         {
             //向Worker发送连接关闭的消息
-            $this->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE,$connection);
+            $this->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE,$connection,$connection->userData->gatewayHeader);
             //清理连接
-            unset($this->_clientConnections[$connection->fd]);
+            unset($this->clientConnections[$connection->fd]);
 
             //清理uId数据
-            if(isset($connection->uId) && !empty($this->_uIdClientConnections[$connection->uId]))
+            if(isset($connection->uId) && !empty($this->uIdClientConnections[$connection->uId]))
             {
-                unset($this->_uIdClientConnections[$connection->uId][$connection->fd]);
-                if(empty($this->_uIdClientConnections[$connection->uId]))
+                unset($this->uIdClientConnections[$connection->uId][$connection->fd]);
+                if(empty($this->uIdClientConnections[$connection->uId]))
                 {
-                    unset($this->_uIdClientConnections[$connection->uId]);
+                    unset($this->uIdClientConnections[$connection->uId]);
                 }
             }
             //清理group数据
@@ -165,21 +170,21 @@ class GatewayServer extends GatewayObject
      */
     public function onReceivePkg($connection,$context)
     {
-        $this->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $context->userData->pkg);
+        $this->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
     }
 
-    public function sendToWorker($cmd,$connection,$data = '')
+    public function sendToWorker($cmd,$clientConntion,$gatewayHeader,$data = '')
     {
-        $gatewayData = $connection->userData->gatewayHeader;
+        $gatewayData = $gatewayHeader;
         $gatewayData['cmd'] = $cmd;
         $gatewayData['body'] = $data;
         $gatewayData['extData'] = '';
 
-        if($this->_workerConnections)
+        if($this->workerConnections)
         {
             //根据路由规则，选择一个Worker把请求转发
 
-            $workerConnection = $this->bindClientToWorker($connection,$cmd,$data);
+            $workerConnection = $this->bindClientToWorker($clientConntion,$cmd,$data);
             if(isset($workerConnection))
             {
                 $workerConnection->send($gatewayData);
@@ -195,10 +200,10 @@ class GatewayServer extends GatewayObject
 
     public function bindClientToWorker($clientConnection,$cmd,$buffer)
     {
-        if (!isset($clientConnection->workerKey) || !isset($this->_workerKeyConnections[$clientConnection->workerKey])) {
-            $clientConnection->workerKey = array_rand($this->_workerKeyConnections);
+        if (!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key])) {
+            $clientConnection->key = array_rand($this->workerKeyConnections);
         }
-        return $this->_workerKeyConnections[$clientConnection->workerKey];
+        return $this->workerKeyConnections[$clientConnection->key];
     }
 
     /*****************************************注册中心相关*********************************************************/
@@ -384,14 +389,14 @@ class GatewayServer extends GatewayObject
         $connection->userData = new \stdClass();
         $connection->protocol->onReceivePkg = array($this,'onInnerWorkerReceivePkg');
 
-        $this->_workerConnections[$fd] = $connection;
+        $this->workerConnections[$fd] = $connection;
     }
 
     public function innerWorkerReceive($server,$fd,$fromId,$data)
     {
-        if(isset($this->_workerConnections[$fd]))
+        if(isset($this->workerConnections[$fd]))
         {
-            $connection = $this->_workerConnections[$fd];
+            $connection = $this->workerConnections[$fd];
             $connection->protocol->fd = $fd;
             $connection->protocol->fromId = $fromId;
             $connection->protocol->decode($connection, $data);
@@ -404,9 +409,9 @@ class GatewayServer extends GatewayObject
 
     public function innerWorkerClose($server,$fd)
     {
-        $connection = $this->_workerConnections[$fd];
-        unset($this->_workerConnections[$fd]);
-        unset($this->_workerKeyConnections[$connection->key]);
+        $connection = $this->workerConnections[$fd];
+        unset($this->workerConnections[$fd]);
+        unset($this->workerKeyConnections[$connection->key]);
     }
     /**
      * 正常情况下，Worker端是不发送ping的，心跳只有Gateway来发
@@ -417,55 +422,7 @@ class GatewayServer extends GatewayObject
     {
         //收到一个完整包之后处理
         $msgPkg = $context->userData->pkg;
-
-        $cmd = $msgPkg['cmd'];
-        switch ($cmd) {
-            case CmdDefine::CMD_PONG:
-                break;
-            case CmdDefine::CMD_WORKER_GATEWAY_REQ:
-                $this->registWorker($connection, $msgPkg);
-                break;
-            case CmdDefine::CMD_SEND_TO_ONE:
-                $this->sendDataFromWorkerToClient($connection, $msgPkg);
-                break;
-            case CmdDefine::CMD_KICK:
-                break;
-            case CmdDefine::CMD_DESTROY:
-                break;
-            case CmdDefine::CMD_SEND_TO_ALL:
-                break;
-            case CmdDefine::CMD_SET_SESSION:
-                break;
-            case CmdDefine::CMD_UPDATE_SESSION:
-                break;
-            case CmdDefine::CMD_GET_SESSION_BY_CLIEND_ID:
-                break;
-            case CmdDefine::CMD_GET_ALL_CLIENT_INFO:
-                break;
-            case CmdDefine::CMD_IS_ONLINE:
-                break;
-            case CmdDefine::CMD_BIND_UID:
-                break;
-            case CmdDefine::CMD_UNBIND_UID:
-                break;
-            case CmdDefine::CMD_SEND_TO_UID:
-                break;
-            case CmdDefine::CMD_JOIN_GROUP:
-                break;
-            case CmdDefine::CMD_LEAVE_GROUP:
-                break;
-            case CmdDefine::CMD_SEND_TO_GROUP:
-                break;
-            case CmdDefine::CMD_GET_CLIENT_INFO_BY_GROUP:
-                break;
-            case CmdDefine::CMD_GET_CLIENT_COUNT_BY_GROUP:
-                break;
-            case CmdDefine::CMD_GET_CLIENT_ID_BY_UID:
-                break;
-            default:
-
-                break;
-        }
+        GatewayLogic::onInnerWorkerReceivePkg($this, $connection, $msgPkg);
     }
 
     public function registWorker($connection,$msgPkg)
@@ -474,14 +431,14 @@ class GatewayServer extends GatewayObject
         $workerKey = json_decode($msgPkg['body'], true);
         $key = $swConnInfo['remote_ip'] . ':' . $workerKey['workerKey'];
         //判断是否存在
-        if(isset($this->_workerKeyConnections[$key]))
+        if(isset($this->workerKeyConnections[$key]))
         {
             $this->_server->serverClose($connection->fd);
             return;
         }
         $connection->key = $key;
         $this->_server->logger(LoggerLevel::INFO,'Worker连接 Key: ' . $key);
-        $this->_workerKeyConnections[$key] = $connection;
+        $this->workerKeyConnections[$key] = $connection;
 
         $respData = GatewayWorkerProtocol::$emptyPkg;
         $respData['cmd'] = CmdDefine::CMD_WORKER_GATEWAY_RESP;
@@ -491,11 +448,11 @@ class GatewayServer extends GatewayObject
     public function sendDataFromWorkerToClient($connection, $msgPkg)
     {
         $key = $msgPkg['connectionId'];
-        if(!array_key_exists($key,  $this->_clientConnections))
+        if(!array_key_exists($key,  $this->clientConnections))
         {
             return;
         }
-        $clientConnection = $this->_clientConnections[$key];
+        $clientConnection = $this->clientConnections[$key];
         if(isset($clientConnection))
         {
             $clientConnection->send($msgPkg['body']);
@@ -530,7 +487,7 @@ class GatewayServer extends GatewayObject
         $pingData = GatewayWorkerProtocol::$emptyPkg;
         $pingData['cmd'] = CmdDefine::CMD_PING;
 
-        foreach($this->_workerConnections as $connection)
+        foreach($this->workerConnections as $connection)
         {
             $connection->send($pingData);
         }

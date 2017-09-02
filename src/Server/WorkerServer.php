@@ -31,21 +31,21 @@ class WorkerServer extends GatewayObject
      * 注册中心信息
      * @var [type]
      */
-    private $_registerConnClient;
-    private $_registerConnection;
+    public $_registerConnClient;
+    public $_registerConnection;
 
-    private $_pingRegisterTimerId;
-    private $_tryToConnectRegisterTimerId = -1;
+    public $_pingRegisterTimerId;
+    public $_tryToConnectRegisterTimerId = -1;
 
-    private $_pingWorkerTimerId;
-    private $_tryToConnectGatewayTimerId = -1;
+    public $_pingWorkerTimerId;
+    public $_tryToConnectGatewayTimerId = -1;
     /**
      * 保存网关信息
      * @var array
      */
-    private $_gatewayAddresses = array();
-    private $_gatewayConnection;
-    private $_gatewayConnectingAddress = '';
+    public $_gatewayAddresses = array();
+    public $_gatewayConnection;
+    public $_gatewayConnectingAddress = '';
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
@@ -153,9 +153,13 @@ class WorkerServer extends GatewayObject
         $this->_server->logger(LoggerLevel::INFO, '注册中心连接成功！');
 
         $scheme = parse_url($this->_settings['uri']);
-        //连接成功后发送包通知
+        /**
+         * 连接成功后发送包通知
+         * 包内的信息包括游戏服地址和游戏服的ID
+         */
         $data['cmd'] = CmdDefine::CMD_WORKER_REGISTER_REQ;
         $data['address'] = $scheme['scheme'] . '://' . $scheme['host'] . ':' . $scheme['port'];
+        $data['gameSvrId'] = $this->_settings['gameSvrId'];
 
         $this->_registerConnection = new TCPConnection();
         $this->_registerConnection->protocol = new BinaryProtocol($this, -1, -1);
@@ -358,9 +362,9 @@ class WorkerServer extends GatewayObject
         }
         //绑定上下文
         Context::$workerServer      = $this;
-        Context::$clientIp          = $context->userData->pkg['clientIp'];
+        Context::$clientIp          = long2ip($context->userData->pkg['clientIp']);
         Context::$clientPort        = $context->userData->pkg['clientPort'];
-        Context::$localIp           = $context->userData->pkg['localIp'];
+        Context::$localIp           = long2ip($context->userData->pkg['localIp']);
         Context::$localPort         = $context->userData->pkg['localPort'];
         Context::$connectionId      = $context->userData->pkg['connectionId'];
         Context::$clientId          = Context::addressToClientId(Context::$localIp,Context::$localPort,Context::$connectionId);
