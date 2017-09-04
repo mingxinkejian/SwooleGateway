@@ -8,10 +8,12 @@ abstract class MsgHandler
 {
     public $_msgId;
 
+    public $_server;
+
     public function __construct($msgId)
     {
         $this->_msgId = $msgId;
     }
 
-    public abstract function handlerMsg($msgPkg);
+    public abstract function handlerMsg($connection,$msgPkg);
 }

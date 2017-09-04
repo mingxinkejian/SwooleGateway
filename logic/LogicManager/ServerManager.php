@@ -9,11 +9,12 @@ use Logic\MsgHandler\LoginMsgHandler;
 class ServerManager extends Singleton
 {
     private $_logicMapper = array();
+    public $dbManager;
 
     public function init()
     {
         echo 'ServerManager init ' . PHP_EOL;
-        $this->registerMsgHandlerMapper();
+        
     }
 
     public function registerMsgHandlerMapper()

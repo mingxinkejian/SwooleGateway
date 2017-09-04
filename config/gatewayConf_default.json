@@ -13,8 +13,8 @@
     },
     "logConfig" : {
         "logPath" : "/Users/p_tingjming/Documents/SwooleGateway/log/gatewaySvr",
-        "isCache" : true,
+        "isCache" : false,
         "queueMax" : 100,
-        "logLevel" : 1
+        "logLevel" : 5
     }
 }

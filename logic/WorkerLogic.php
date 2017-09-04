@@ -28,7 +28,7 @@ class WorkerLogic
      * 服务器启动时的回调，可以在此初始化数据库连接等等
      * @return [type] [description]
      */
-    public static function onServerStart($server)
+    public static function onServerStart($workerServer)
     {
         //消息处理注册到管理器中
         ServerManager::getInstance()->registerMsgHandlerMapper();
@@ -39,17 +39,18 @@ class WorkerLogic
 
     }
 
-    public static function clientMessage($msgPkg)
+    public static function clientMessage($workerServer,$connection,$msgPkg)
     {
-        $msgId = unpack("NmsgId", substr($msgPkg, 0,4));
-        $handler = ServerManager::getInstance()->getMsgHandler($msgId['msgId']);
+        $protocolId = unpack("NprotocolId", substr($msgPkg, 0,4));
+        $handler = ServerManager::getInstance()->getMsgHandler($protocolId['protocolId']);
         if(!empty($handler))
         {
-            $handler->handlerMsg($msgPkg);
+            $handler->_server = $workerServer;
+            $handler->handlerMsg(Context::$connection, substr($msgPkg, 4));
         }
         else
         {
-            Context::$workerServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$msgId['msgId']}]的MsgHandler");
+            Context::$workerServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$protocolId['protocolId']}]的MsgHandler");
         }
 
         // $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;

@@ -31,14 +31,13 @@ class WorkerServer extends GatewayObject
      * 注册中心信息
      * @var [type]
      */
-    public $_registerConnClient;
-    public $_registerConnection;
+    public $registerConnClient;
+    public $registerConnection;
 
-    public $_pingRegisterTimerId;
-    public $_tryToConnectRegisterTimerId = -1;
+    public $pingRegisterTimerId;
+    public $tryToConnectRegisterTimerId = -1;
 
-    public $_pingWorkerTimerId;
-    public $_tryToConnectGatewayTimerId = -1;
+    public $tryToConnectGatewayTimerId = -1;
     /**
      * 保存网关信息
      * @var array
@@ -131,19 +130,19 @@ class WorkerServer extends GatewayObject
     private function connectToReisterServer($urlData)
     {
         $scheme = parse_url($urlData['uri']);
-        $this->_registerConnClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
+        $this->registerConnClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
 
-        $this->_registerConnClient->set($this->_swSettings['clientConf']);
+        $this->registerConnClient->set($this->_swSettings['clientConf']);
         //绑定和注册中心的相关回调
-        $this->_registerConnClient->on('connect', array($this, 'onRegisterConnect'));
+        $this->registerConnClient->on('connect', array($this, 'onRegisterConnect'));
 
-        $this->_registerConnClient->on('receive', array($this, 'onRegisterReceive'));
+        $this->registerConnClient->on('receive', array($this, 'onRegisterReceive'));
 
-        $this->_registerConnClient->on('close', array($this, 'onRegisterClose'));
+        $this->registerConnClient->on('close', array($this, 'onRegisterClose'));
 
-        $this->_registerConnClient->on('error', array($this, 'onRegisterError'));
+        $this->registerConnClient->on('error', array($this, 'onRegisterError'));
 
-        $this->_registerConnClient->connect($scheme['host'], $scheme['port']);
+        $this->registerConnClient->connect($scheme['host'], $scheme['port']);
 
 
     }
@@ -161,42 +160,42 @@ class WorkerServer extends GatewayObject
         $data['address'] = $scheme['scheme'] . '://' . $scheme['host'] . ':' . $scheme['port'];
         $data['gameSvrId'] = $this->_settings['gameSvrId'];
 
-        $this->_registerConnection = new TCPConnection();
-        $this->_registerConnection->protocol = new BinaryProtocol($this, -1, -1);
-        $this->_registerConnection->protocol->onReceivePkg = array($this,'onRegisterReceivePkg');
-        $this->_registerConnection->server = $client;
-        $this->_registerConnection->socket = -1;
-        $this->_registerConnection->fd = -1;
-        $this->_registerConnection->fromId = -1;
-        $this->_registerConnection->userData = new \stdClass();
+        $this->registerConnection = new TCPConnection();
+        $this->registerConnection->protocol = new BinaryProtocol($this, -1, -1);
+        $this->registerConnection->protocol->onReceivePkg = array($this,'onRegisterReceivePkg');
+        $this->registerConnection->server = $client;
+        $this->registerConnection->socket = -1;
+        $this->registerConnection->fd = -1;
+        $this->registerConnection->fromId = -1;
+        $this->registerConnection->userData = new \stdClass();
 
-        $this->_registerConnection->send(json_encode($data));
+        $this->registerConnection->send(json_encode($data));
 
         //注册定时器，定时发ping包,单位为ms
         $heartbeatTime = isset($this->_settings['heartbeatTime']) ? $this->_settings['heartbeatTime'] : 5;
         $heartbeatTime *= 1000;
-        $this->_pingRegisterTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToRegister'));
+        $this->pingRegisterTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToRegister'));
 
-        if($this->_tryToConnectRegisterTimerId > 0)
+        if($this->tryToConnectRegisterTimerId > 0)
         {
-            $this->_server->swServer->clearTimer($this->_tryToConnectRegisterTimerId);
-            $this->_tryToConnectRegisterTimerId = -1;
+            $this->_server->swServer->clearTimer($this->tryToConnectRegisterTimerId);
+            $this->tryToConnectRegisterTimerId = -1;
             $this->_server->logger(LoggerLevel::INFO, '注册中心连接重连成功！Address : ' . $this->_settings['uri']);
         }
     }
 
     public function onRegisterReceive($client,$data)
     {
-        if(isset($this->_registerConnection))
+        if(isset($this->registerConnection))
         {
-            $this->_registerConnection->protocol->fd = -1;
-            $this->_registerConnection->protocol->fromId = -1;
-            $this->_registerConnection->protocol->decode($this->_registerConnection, $data);
+            $this->registerConnection->protocol->fd = -1;
+            $this->registerConnection->protocol->fromId = -1;
+            $this->registerConnection->protocol->decode($this->registerConnection, $data);
         }
         else
         {
-            $this->_registerConnClient->close();
-            $this->_registerConnection = null;
+            $this->registerConnClient->close();
+            $this->registerConnection = null;
         }
     }
 
@@ -219,17 +218,17 @@ class WorkerServer extends GatewayObject
     public function onRegisterClose($client)
     {
         $this->_server->logger(LoggerLevel::INFO, '注册中心连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id);
-        $this->_registerConnClient = null;
+        $this->registerConnClient = null;
 
-        $this->_server->swServer->clearTimer($this->_pingRegisterTimerId);
+        $this->_server->swServer->clearTimer($this->pingRegisterTimerId);
 
-        $this->_tryToConnectRegisterTimerId = $this->_server->swServer->tick(5000, array($this, 'tryConnectToRegister'));
+        $this->tryToConnectRegisterTimerId = $this->_server->swServer->tick(5000, array($this, 'tryConnectToRegister'));
     }
 
     public function onRegisterError($client)
     {
         $client->close();
-        $this->_registerConnClient = null;
+        $this->registerConnClient = null;
         $this->_server->logger(LoggerLevel::ERROR, 'onGatewayError:' . socket_strerror($client->errCode));
     }
     /**
@@ -240,8 +239,8 @@ class WorkerServer extends GatewayObject
     {
         $pingData['cmd'] = CmdDefine::CMD_PING;
         $data = json_encode($pingData);
-        $buffer = $this->_registerConnection->protocol->encode($data);
-        $this->_registerConnClient->send($buffer);
+        $buffer = $this->registerConnection->protocol->encode($data);
+        $this->registerConnClient->send($buffer);
     }
 
     public function tryConnectToRegister()
@@ -290,10 +289,10 @@ class WorkerServer extends GatewayObject
 
         if(empty($this->_gatewayConnection))
         {
-            if($this->_tryToConnectGatewayTimerId > 0)
+            if($this->tryToConnectGatewayTimerId > 0)
             {
-                $this->_server->swServer->clearTimer($this->_tryToConnectGatewayTimerId);
-                $this->_tryToConnectGatewayTimerId = -1;
+                $this->_server->swServer->clearTimer($this->tryToConnectGatewayTimerId);
+                $this->tryToConnectGatewayTimerId = -1;
                 $this->_server->logger(LoggerLevel::INFO, '网关连接重连成功！Address : ' .$address);
             }
             
@@ -376,7 +375,7 @@ class WorkerServer extends GatewayObject
                 WorkerLogic::clientConnect();
                 break;
             case CmdDefine::CMD_CLIENT_MESSAGE:
-                WorkerLogic::clientMessage($context->userData->pkg['body']);
+                WorkerLogic::clientMessage($this,$connection,$context->userData->pkg['body']);
                 break;
             case CmdDefine::CMD_CLIENT_CLOSE:
                 WorkerLogic::clientClose();
@@ -395,7 +394,7 @@ class WorkerServer extends GatewayObject
         $this->_server->logger(LoggerLevel::WARN, '网关连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id);
         $this->_gatewayConnection = null;
         
-        $this->_tryToConnectGatewayTimerId = $this->_server->swServer->tick(5000, array($this, 'tryToConnectGateway'));
+        $this->tryToConnectGatewayTimerId = $this->_server->swServer->tick(5000, array($this, 'tryToConnectGateway'));
     }
 
     public function onGatewayError($client)

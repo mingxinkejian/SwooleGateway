@@ -12,13 +12,13 @@
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
 
-namespace SwooleGateway\Logger;
+namespace Logic\Define;
 
-class LoggerLevel
+/**
+* 
+*/
+class LogicCmdDefine
 {
-    const ERROR     = 0x01;
-    const WARN      = 0x02;
-    const INFO      = 0x03;
-    const NOTICE    = 0x04;
-    const DEBUG     = 0x05;
+    //登录
+    const LOGIC_CMD_LOGIN = 0x1000;
 }

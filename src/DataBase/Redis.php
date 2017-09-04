@@ -14,6 +14,8 @@
 
 namespace SwooleGateway\DataBase;
 
+use SwooleGateway\Logger\ServerException;
+
 /**
 * Redis的操作放弃
 * 
@@ -32,26 +34,48 @@ class Redis
 
     private function connect()
     {
-        $this->_redis->pconnect($redisConf['host'],$redisConf['port']);
-        if(!empty($redisConf['password']))
+
+        try
         {
-            $this->_redis->auth($redisConf['password']);
+            $connectResult = $this->_redis->pconnect($this->_config['host'],$this->_config['port']);
+            if(!empty($this->_config['password']) && $connectResult)
+            {
+                $this->_redis->auth($this->_config['password']);
+            }
+        }
+        catch(\Exception $e)
+        {
+            ServerException::appException($e);
         }
     }
 
     public function ping()
     {
-        if($this->_redis->ping())
+        try 
         {
-            $this->connect();
+            if($this->_redis->ping() !== '+PONG')
+            {
+                $this->connect();
+            }
+        }
+        catch(\Exception $e)
+        {
+            ServerException::appException($e);
         }
     }
 
     public function __call($method,$args)
     {
-        if(method_exists($this->_redis, $method))
+        try
         {
-            return call_user_func_array(array($this->_redis, $method), $args);
+            if(method_exists($this->_redis, $method))
+            {
+                return call_user_func_array(array($this->_redis, $method), $args);
+            }
+        }
+        catch(\Exception $e)
+        {
+            ServerException::appException($e);
         }
     }
 

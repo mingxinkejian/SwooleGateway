@@ -31,12 +31,12 @@ class GatewayServer extends GatewayObject
      * 注册中心信息
      * @var [type]
      */
-    public $_registerConnClient;
-    public $_registerConnection;
+    public $registerConnClient;
+    public $registerConnection;
+    public $pingRegisterTimerId;
+    public $tryToConnectRegisterTimerId = -1;
 
-    public $_pingRegisterTimerId;
-
-    public $_pingWorkerTimerId;
+    public $pingWorkerTimerId;
     /**
      * 后端worker连接信息
      * @var [type]
@@ -55,7 +55,7 @@ class GatewayServer extends GatewayObject
 
     public $groupConnections = array();
 
-    public $_innerWorkerUri;
+    public $innerWorkerUri;
 
     public function __construct($config,$mode = SWOOLE_BASE)
     {
@@ -67,7 +67,7 @@ class GatewayServer extends GatewayObject
     {
         $this->_settings = $config;
         $this->parseConfig($config,$mode);
-        $this->_innerWorkerUri = parse_url($config['innerUri']);
+        $this->innerWorkerUri = parse_url($config['innerUri']);
 
         $this->_server->onStart = array($this, 'onStart');
         $this->_server->onWorkerStart = array($this, 'onWorkerStart');
@@ -89,8 +89,9 @@ class GatewayServer extends GatewayObject
 
     public function onWorkerStart($server,$workerId)
     {
+        GatewayLogic::onServerStart($this);
         // 注册gateway的内部通讯地址到register，worker 去连这个地址，以便 gateway 与 worker 之间建立起 TCP 长连接
-        $this->connectRegisterAddress($server,$workerId);
+        $this->connectRegisterAddress();
         // 向Worker发送心跳包
         $this->registerSendWorkerPing($server,$workerId);
     }
@@ -113,7 +114,7 @@ class GatewayServer extends GatewayObject
 
         $connection->userData->gatewayHeader = array(
             'localIp'       =>  ip2long($this->_server->getDefaultHost()),
-            'localPort'     =>  $this->_innerWorkerUri['port'],
+            'localPort'     =>  $this->innerWorkerUri['port'],
             'clientIp'      =>  ip2long($swConnInfo['remote_ip']),
             'clientPort'    =>  $swConnInfo['remote_port'],
             'connectionId'  =>  $connection->fd,
@@ -181,7 +182,7 @@ class GatewayServer extends GatewayObject
     public function onReceivePkg($connection,$context)
     {
         //在此处处理收到的包，拆包后处理是否转发
-        GatewayLogic::onClientConnect($this, $connection, $context);
+        GatewayLogic::onClientReceivePkg($this, $connection, $context);
         
     }
 
@@ -219,7 +220,7 @@ class GatewayServer extends GatewayObject
     }
 
     /*****************************************注册中心相关*********************************************************/
-    private function connectRegisterAddress($server,$workerId)
+    private function connectRegisterAddress()
     {
         $registData['cmd'] = CmdDefine::CMD_REGISTER_REQ_AND_RESP;
         $registData['key'] = $this->_settings['clusterMakerKey'];
@@ -246,7 +247,7 @@ class GatewayServer extends GatewayObject
                if($md5 == $parseRecvData['md5'] && $parseRecvData['cmd'] == CmdDefine::CMD_REGISTER_REQ_AND_RESP)
                {
                     $this->_server->logger(LoggerLevel::NOTICE, '获取注册中心！ Address:' . $parseRecvData['uri']);
-                    $this->connectToReisterServer($parseRecvData, $server, $workerId);
+                    $this->connectToReisterServer($parseRecvData);
                }
                else
                {
@@ -263,64 +264,69 @@ class GatewayServer extends GatewayObject
     }
 
 
-    private function connectToReisterServer($urlData,$server,$workerId)
+    private function connectToReisterServer($urlData)
     {
         $scheme = parse_url($urlData['uri']);
-        $this->_registerConnClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
+        $this->registerConnClient = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
 
-        $this->_registerConnClient->set($this->_swSettings['clientConf']);
+        $this->registerConnClient->set($this->_swSettings['clientConf']);
         //绑定和注册中心的相关回调
-        $this->_registerConnClient->on('connect', array($this, 'onRegisterConnect'));
+        $this->registerConnClient->on('connect', array($this, 'onRegisterConnect'));
 
-        $this->_registerConnClient->on('receive', array($this, 'onRegisterReceive'));
+        $this->registerConnClient->on('receive', array($this, 'onRegisterReceive'));
 
-        $this->_registerConnClient->on('close', array($this, 'onRegisterClose'));
+        $this->registerConnClient->on('close', array($this, 'onRegisterClose'));
 
-        $this->_registerConnClient->on('error', array($this, 'onRegisterError'));
+        $this->registerConnClient->on('error', array($this, 'onRegisterError'));
 
-        $this->_registerConnClient->connect($scheme['host'], $scheme['port']);
+        $this->registerConnClient->connect($scheme['host'], $scheme['port']);
 
 
     }
 
     public function onRegisterConnect($client)
     {
-        $this->_registerConnection = new TCPConnection();
-        $this->_registerConnection->protocol = new BinaryProtocol($this, -1, -1);
-        $this->_registerConnection->protocol->onReceivePkg = array($this,'onRegisterReceivePkg');
-        $this->_registerConnection->server = $client;
-        $this->_registerConnection->socket = -1;
-        $this->_registerConnection->fd = -1;
-        $this->_registerConnection->fromId = -1;
-        $this->_registerConnection->userData = new \stdClass();
+        $this->registerConnection = new TCPConnection();
+        $this->registerConnection->protocol = new BinaryProtocol($this, -1, -1);
+        $this->registerConnection->protocol->onReceivePkg = array($this,'onRegisterReceivePkg');
+        $this->registerConnection->server = $client;
+        $this->registerConnection->socket = -1;
+        $this->registerConnection->fd = -1;
+        $this->registerConnection->fromId = -1;
+        $this->registerConnection->userData = new \stdClass();
 
-        $scheme = $this->_innerWorkerUri;
+        $scheme = $this->innerWorkerUri;
         //连接成功后发送包通知
         $data['cmd'] = CmdDefine::CMD_GATEWAY_REGISTER_REQ;
         $data['address'] = $scheme['scheme'] . '://' . $scheme['host'] . ':' . $scheme['port'];
 
-        $this->_registerConnection->send(json_encode($data));
+        $this->registerConnection->send(json_encode($data));
 
         //注册定时器，定时发ping包,单位为ms
         $heartbeatTime = isset($this->_settings['heartbeatTime']) ? $this->_settings['heartbeatTime'] : 5;
         $heartbeatTime *= 1000;
-        $this->_pingRegisterTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToRegister'));
+        $this->pingRegisterTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToRegister'));
 
-
+        if($this->tryToConnectRegisterTimerId > 0)
+        {
+            $this->_server->swServer->clearTimer($this->tryToConnectRegisterTimerId);
+            $this->tryToConnectRegisterTimerId = -1;
+            $this->_server->logger(LoggerLevel::INFO, '注册中心连接重连成功！Address : ' . $this->_settings['uri']);
+        }
     }
 
     public function onRegisterReceive($client,$data)
     {
-        if(isset($this->_registerConnection))
+        if(isset($this->registerConnection))
         {
-            $this->_registerConnection->protocol->fd = -1;
-            $this->_registerConnection->protocol->fromId = -1;
-            $this->_registerConnection->protocol->decode($this->_registerConnection, $data);
+            $this->registerConnection->protocol->fd = -1;
+            $this->registerConnection->protocol->fromId = -1;
+            $this->registerConnection->protocol->decode($this->registerConnection, $data);
         }
         else
         {
-            $this->_registerConnClient->close();
-            $this->_registerConnection = null;
+            $this->registerConnClient->close();
+            $this->registerConnection = null;
         }
     }
 
@@ -340,15 +346,17 @@ class GatewayServer extends GatewayObject
     public function onRegisterClose($client)
     {
         $this->_server->logger(LoggerLevel::ERROR, '注册中心连接关闭！当前服务进程ID为:' . $this->_server->swServer->worker_id);
-        $this->_registerConnClient = null;
+        $this->registerConnClient = null;
 
-        $this->_server->swServer->clearTimer($this->_pingRegisterTimerId);
+        $this->_server->swServer->clearTimer($this->pingRegisterTimerId);
+
+        $this->tryToConnectRegisterTimerId = $this->_server->swServer->tick(5000, array($this, 'tryConnectToRegister'));
     }
 
     public function onRegisterError($client)
     {
         $client->close();
-        $this->_registerConnClient = null;
+        $this->registerConnClient = null;
     }
     /**
      * 向注册中心发送的心跳包为json格式
@@ -358,9 +366,14 @@ class GatewayServer extends GatewayObject
     {
         $pingData['cmd'] = CmdDefine::CMD_PING;
         $data = json_encode($pingData);
-        $this->_registerConnection->send($data);
+        $this->registerConnection->send($data);
     }
 
+    public function tryConnectToRegister()
+    {
+        $this->_server->logger(LoggerLevel::INFO, '注册中心连接关闭！ 正在重连！');
+        $this->connectRegisterAddress();
+    }
 
     /*****************************************注册中心相关 END*********************************************************/
 
@@ -371,7 +384,7 @@ class GatewayServer extends GatewayObject
      */
     public function addInnerWorkerListener()
     {
-        $scheme = $this->_innerWorkerUri;
+        $scheme = $this->innerWorkerUri;
         $innerWorkerListenerUri = $scheme['scheme'] . '://' . $scheme['host'] . ':' . $scheme['port'];
         $listener = $this->_server->addListener($innerWorkerListenerUri, SWOOLE_SOCK_TCP);
 
@@ -487,7 +500,7 @@ class GatewayServer extends GatewayObject
         $heartbeatTime = isset($this->_settings['heartbeatTime']) ? $this->_settings['heartbeatTime'] : 5;
         $heartbeatTime *= 1000;
 
-        $this->_pingWorkerTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToWorker'));
+        $this->pingWorkerTimerId = $this->_server->swServer->tick($heartbeatTime, array($this, 'pingToWorker'));
     
     }
     /**
@@ -503,6 +516,8 @@ class GatewayServer extends GatewayObject
         {
             $connection->send($pingData);
         }
+
+        GatewayLogic::pingDB();
     }
 
     /*****************************************ServiceServer相关 END********************************************************/

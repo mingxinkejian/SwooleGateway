@@ -48,6 +48,9 @@ class CmdDefine
     const CMD_CLIENT_MESSAGE            = 0x107;
     const CMD_CLIENT_CLOSE              = 0x108;
 
+    const CMD_CLIENT_GATEWAY_MESSAGE    = 0x150;
+    const CMD_CLIENT_WORKER_MESSAGE     = 0x151;
+
     //网关Cmd
     const CMD_SEND_TO_ONE               = 0x200;
     const CMD_KICK                      = 0x201;

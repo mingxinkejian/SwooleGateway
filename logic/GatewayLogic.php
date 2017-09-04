@@ -16,11 +16,25 @@ namespace Logic;
 use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Logger\LoggerLevel;
+use Logic\LogicManager\GatewayServerManager;
+use SwooleGateway\Server\Context\Context;
+
 /**
 * 
 */
 class GatewayLogic
 {
+    public static function onServerStart($gatewayServer)
+    {
+        GatewayServerManager::getInstance()->registerMsgHandlerMapper();
+        GatewayServerManager::getInstance()->initRedis($gatewayServer->_settings['redisConf']);
+    }
+
+    public static function pingDB()
+    {
+        GatewayServerManager::getInstance()->redisManager->ping();
+    }
+
     public static function onClientConnect($gatewayServer,$connection)
     {
         //把客户端连接转发给后端
@@ -29,7 +43,33 @@ class GatewayLogic
 
     public static function onClientReceivePkg($gatewayServer,$connection,$context)
     {
-        $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
+        //收到客户端发送的数据包时，读取包的前2个字节，判断是给网关发送还是给游戏服发送
+        $gatewayCmd = unpack("ngatewayCmd", substr($context->userData->pkg, 0,2));
+        $context->userData->pkg = substr($context->userData->pkg,2);
+        switch ($gatewayCmd['gatewayCmd']) {
+            case CmdDefine::CMD_CLIENT_GATEWAY_MESSAGE:
+                {
+                    $protocolId = unpack("NprotocolId", substr($context->userData->pkg, 0,4));
+                    $handler = GatewayServerManager::getInstance()->getMsgHandler($protocolId['protocolId']);
+                    if(!empty($handler))
+                    {
+                        $handler->_server = $gatewayServer;
+                        $handler->handlerMsg($connection, substr($context->userData->pkg,4));
+                    }
+                    else
+                    {
+                        $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$protocolId['protocolId']}]的MsgHandler");
+                    }
+                }
+                break;
+            case CmdDefine::CMD_CLIENT_WORKER_MESSAGE:
+                $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
+                break;
+            default:
+                break;
+        }
+
+        
     }
 
     public static function onInnerWorkerReceivePkg($gatewayServer,$connection,$msgPkg)

@@ -7,6 +7,8 @@ if (version_compare(PHP_VERSION, '5.5.0', '<')) {
 }
 date_default_timezone_set('PRC');
 define('RunRoot', __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+define('E_FATAL',  E_ERROR | E_USER_ERROR |  E_CORE_ERROR | 
+        E_COMPILE_ERROR | E_RECOVERABLE_ERROR| E_PARSE );
 
 require __DIR__ . DIRECTORY_SEPARATOR .'..' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
 use SwooleGateway\AutoLoader;

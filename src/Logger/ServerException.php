@@ -17,17 +17,21 @@ class ServerException extends \Exception{
     
     private static $_logger;
 
-    public static function initException($logger){
+    public static function initException($logger)
+    {
         self::$_logger = $logger;
         register_shutdown_function('SwooleGateway\Logger\ServerException::fatalError');
         set_error_handler('SwooleGateway\Logger\ServerException::appError');
-        set_exception_handler('SwooleGateway\Logger\ServerException::appException');
+        set_exception_handler('SwooleGateway\Logger\ServerException::appException');        
     }
     
-    public static function fatalError(){        
+    public static function fatalError()
+    {        
         $e = error_get_last();
-        if (!empty($e)) {
-            switch ($e['type']) {
+        if(!empty($e))
+        {
+            switch($e['type'])
+            {
                 case E_ERROR:
                 case E_PARSE:
                 case E_CORE_ERROR:
@@ -43,9 +47,11 @@ class ServerException extends \Exception{
     }
     
     
-    public static function appError($errno, $errstr, $errfile, $errline){
+    public static function appError($errno, $errstr, $errfile, $errline)
+    {
         $errorStr = "[{$errno}] {$errstr} {$errfile} on {$errline} line.";
-        switch ($errno) {
+        switch($errno)
+        {
             case E_ERROR:
             case E_PARSE:
             case E_CORE_ERROR:
@@ -62,7 +68,8 @@ class ServerException extends \Exception{
         }
     }
     
-    public static function appException($e){
+    public static function appException($e)
+    {
         // 记录异常日志
         $message = "[File : {$e->getFile()} Line : {$e->getLine()}] Message : {$e->getMessage()} \n Trace : {$e->getTraceAsString()}";
         self::$_logger->error($message);

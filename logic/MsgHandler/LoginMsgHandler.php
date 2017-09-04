@@ -9,12 +9,12 @@ use SwooleGateway\Server\Context\Context;
 
 class LoginMsgHandler extends MsgHandler
 {
-    public function handlerMsg($msgPkg)
+    public function handlerMsg($connection,$msgPkg)
     {
         $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;
         $gatewayData['cmd']             = CmdDefine::CMD_SEND_TO_ONE;
         $gatewayData['connectionId']    = Context::$connectionId;
-        $gatewayData['body']            = json_decode(substr($msgPkg, 4),true)['swooleClient'];
+        $gatewayData['body']            = 'this message is send from worker';
 
         Context::$connection->send($gatewayData);
     }
