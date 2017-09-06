@@ -28,8 +28,8 @@ use SwooleGateway\Server\Protocols\IProtocol\IProtocol;
 *     unsigned int          connectionId,
 *     unsigned short        gatewayPort,
 *     unsigned int          extLen,
-*     char[ext_len]         extData,
-*     char[pack_length-HEAD_LEN] body//包体
+*     char[extLen]         extData,
+*     char[packLen - HEAD_LEN] body//包体
 * }
 * NCNnNnNCnN
 */

@@ -11,7 +11,8 @@
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
 
-PHP_BIN=$(which php)
+#PHP_BIN=$(which php)
+PHP_BIN=/Applications/XAMPP/bin/php
 APP_NAME="Worker"
 PID_FILE="../run/workerSvr_master.pid"
 PS_EXE="/bin/ps"
@@ -45,7 +46,7 @@ start()
     getpid
     if [[ "X$pid" = "X" ]]; then
         # $PHP_BIN WorkerSvr_run.php ../config/workerConf_default.json
-        nohup /Applications/XAMPP/bin/php WorkerSvr_run.php ../config/workerConf_default.json &
+        nohup $PHP_BIN WorkerSvr_run.php ../config/workerConf_default.json >> ../log/workerConsole.log 2>&1 &
         newpid=$!
         echo "Start $APP_NAME at $DATE,which PID $newpid"
         echo "$newpid" > "$PID_FILE"

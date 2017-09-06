@@ -11,7 +11,8 @@
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
 
-PHP_BIN=$(which php)
+#PHP_BIN=$(which php)
+PHP_BIN=/Applications/XAMPP/bin/php
 APP_NAME="Gateway"
 PID_FILE="../run/gatewaySvr_master.pid"
 PS_EXE="/bin/ps"
@@ -48,7 +49,7 @@ start()
     getpid
     if [[ "X$pid" = "X" ]]; then
         # $PHP_BIN GatewaySvr_run.php ../config/gatewayConf_default.json
-        nohup /Applications/XAMPP/bin/php GatewaySvr_run.php ../config/gatewayConf_default.json &
+        nohup $PHP_BIN GatewaySvr_run.php ../config/gatewayConf_default.json >> ../log/gatewayConsole.log 2>&1 &
         newpid=$!
         echo "Start $APP_NAME at $DATE,which PID $newpid"
         echo "$newpid" > "$PID_FILE"

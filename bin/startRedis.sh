@@ -11,7 +11,7 @@
 # @license   http://www.opensource.org/licenses/mit-license.php MIT License
 #
 
-PHP_BIN=$(which redis-server)
+REDIS_BIN=$(which redis-server)
+REDIS_BIN=/Applications/XAMPP/bin/redis-server
 
-# $PHP_BIN RegisterSvr_run.php ../config/registerConf_default.json
-/Applications/XAMPP/bin/redis-server ../config/redis.conf
+$REDIS_BIN ../config/redis.conf

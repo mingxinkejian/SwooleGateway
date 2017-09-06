@@ -41,8 +41,8 @@ class WorkerLogic
 
     public static function clientMessage($workerServer,$connection,$msgPkg)
     {
-        $protocolId = unpack("NprotocolId", substr($msgPkg, 0,4));
-        $handler = ServerManager::getInstance()->getMsgHandler($protocolId['protocolId']);
+        $protocolCmd = unpack("NprotocolCmd", substr($msgPkg, 0,4));
+        $handler = ServerManager::getInstance()->getMsgHandler($protocolCmd['protocolCmd']);
         if(!empty($handler))
         {
             $handler->_server = $workerServer;
@@ -50,7 +50,7 @@ class WorkerLogic
         }
         else
         {
-            Context::$workerServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$protocolId['protocolId']}]的MsgHandler");
+            Context::$workerServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$protocolCmd['protocolCmd']}]的MsgHandler");
         }
 
         // $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;

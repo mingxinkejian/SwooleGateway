@@ -1,0 +1,4 @@
+##Protobuf协议生成工具
+只需要运行Proto下的genProto脚本即可生成
+如果需要生成不同客户端或服务器端协议请自行修改生成脚本中的生成命令
+Proto的文件描述在protoFiles.txt

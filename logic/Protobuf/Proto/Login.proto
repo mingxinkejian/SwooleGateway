@@ -1,6 +1,0 @@
-syntax="proto3";  
-message LoginInfo  
-{  
-    string username = 1;
-    string password = 2;
-}

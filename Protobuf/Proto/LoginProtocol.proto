@@ -1,0 +1,63 @@
+syntax="proto3";
+
+package Logic.Protocol;
+
+//玩家登陆类型
+enum LoginType
+{
+    LOGIN_TYPE_DEFAULT          = 0; //默认不使用
+    LOGIN_TYPE_MSDK_QQ          = 1; //QQ平台
+    LOGIN_TYPE_MSDK_WX          = 2; //微信平台
+    LOGIN_TYPE_MSDK_GUEST       = 3; //游客访问
+    LOGIN_TYPE_THIRD_PLATFORM   = 4; //第三方平台
+};
+//终端类型
+enum OSType
+{
+    OS_TYPE_DEFAULT     = 0; //默认不使用
+    OS_TYPE_PC          = 1; //PC
+    OS_TYPE_MAC         = 2; //Mac
+    OS_TYPE_WEB         = 3; //web
+    OS_TYPE_IOS         = 4; //IOS
+    OS_TYPE_ANDROID     = 5; //安卓
+};
+
+//玩家的设备相关信息，用于日志统计的信息（在玩家注册和登陆时上报该内容）
+message PlayerEnvInfo
+{
+    bytes clientVersion     = 1;    //客户端版本
+    bytes systemSoft        = 2;    //操作系统版本
+    bytes systemHardware    = 3;    //终端机型设备
+    bytes telecom           = 4;    //运营商
+    bytes network           = 5;    //3G/4G/WIFI/2G
+    bytes screenWidth       = 6;    //屏幕宽度
+    bytes screenHeight      = 7;    //屏幕高度
+    bytes density           = 8;    //屏幕像素密度
+    bytes channel           = 9;    //注册渠道
+    bytes uuid              = 10;   //唯一ID(可用MAC、UDID等信息做标识)
+    bytes cpuHardware       = 11;   //CPU类型|频率|核数
+    bytes memory            = 12;   //内存大小 单位为MB
+    bytes glRender          = 13;   //OpenGL render信息
+    bytes glVersion         = 14;   //OpenGL 版本信息
+    bytes deviceId          = 15;   //设备ID
+
+};
+//登陆请求
+message LoginReq
+{
+    bytes username              = 1;    //用户名   
+    bytes password              = 2;    //密码
+    bytes openId                = 3;    //openId，通常情况下openID为第三方渠道请求后获得的唯一标识，根据业务逻辑和接入渠道情况自行定义
+    int32 uId                   = 4;    //uId，如果在有单独登陆服务器的情况下，通常uId作为唯一ID标识
+    bytes loginToken            = 5;    //登陆Token，通常有登陆服务器的情况下，登陆服务器返回的Token，并用这个Token和网关进行验证
+    LoginType loginType         = 6;    //登陆类型（参照上面的枚举）
+    PlayerEnvInfo playerEnvInfo = 7;    //玩家的机器相关信息（用于数据统计）
+    bytes deviceCode            = 8;    //用于消息推送使用，一般来说用deviceId即可
+    OSType osType               = 9;    //玩家终端类型
+    uint32 channel              = 10;    //第三方渠道号
+};
+//登陆响应
+message LoginResp
+{
+
+};

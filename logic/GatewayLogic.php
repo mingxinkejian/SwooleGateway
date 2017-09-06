@@ -40,36 +40,60 @@ class GatewayLogic
         //把客户端连接转发给后端
         $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
     }
-
+    /**
+     *  unsigned int    packLen,        (4字节) //包长度，包括数据字段
+     *  unsigned short  version,        (2字节) //协议版本号
+     *  unsigned int    appId,          (4字节) //应用ID 
+     *  unsigned short  gatewayCmd,     (2字节) //网关命令
+     *  unsigned int    protocolCmd,    (4字节) //协议命令
+     *  unsigned short  checkSum,       (2字节) //数据校验
+     *  unsigned int    msgIdx          (4字节) //数据包顺序
+     */
     public static function onClientReceivePkg($gatewayServer,$connection,$context)
     {
-        //收到客户端发送的数据包时，读取包的前2个字节，判断是给网关发送还是给游戏服发送
-        $gatewayCmd = unpack("ngatewayCmd", substr($context->userData->pkg, 0,2));
-        $context->userData->pkg = substr($context->userData->pkg,2);
-        switch ($gatewayCmd['gatewayCmd']) {
-            case CmdDefine::CMD_CLIENT_GATEWAY_MESSAGE:
-                {
-                    $protocolId = unpack("NprotocolId", substr($context->userData->pkg, 0,4));
-                    $handler = GatewayServerManager::getInstance()->getMsgHandler($protocolId['protocolId']);
-                    if(!empty($handler))
+        try {
+                //拆包
+            $clientPkgHeader = self::getClientPkgHeader($context);
+            switch ($clientPkgHeader['gatewayCmd'])
+            {
+                case CmdDefine::CMD_CLIENT_GATEWAY_MESSAGE:
                     {
-                        $handler->_server = $gatewayServer;
-                        $handler->handlerMsg($connection, substr($context->userData->pkg,4));
+                        $handler = GatewayServerManager::getInstance()->getMsgHandler($clientPkgHeader['protocolCmd']);
+                        if(!empty($handler))
+                        {
+                            $context->userData->pkgHeader = $clientPkgHeader;
+                            $handler->_server = $gatewayServer;
+                            $handler->handlerMsg($connection, $context);
+                        }
+                        else
+                        {
+                            $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$clientPkgHeader['protocolCmd']}]的MsgHandler");
+                        }
                     }
-                    else
-                    {
-                        $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$protocolId['protocolId']}]的MsgHandler");
-                    }
-                }
-                break;
-            case CmdDefine::CMD_CLIENT_WORKER_MESSAGE:
-                $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
-                break;
-            default:
-                break;
+                    break;
+                case CmdDefine::CMD_CLIENT_WORKER_MESSAGE:
+                    $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_MESSAGE, $connection, $connection->userData->gatewayHeader, $context->userData->pkg);
+                    break;
+                default:
+                    break;
+            } 
         }
-
-        
+        catch (\Exception $e)
+        {
+            $gatewayServer->_server->loger(LoggerLevel::ERROR, $e->getMessage());
+        }      
+    }
+    /**
+     * 拆取包头
+     * @param  [type] $context [description]
+     * @return [type]          [description]
+     */
+    public static function getClientPkgHeader($context)
+    {
+        $HEAD_LEN = 22;
+        $pkgHeader = unpack("nversion/NappId/ngatewayCmd/NprotocolCmd/ncheckSum/NmsgIdx", substr($context->userData->pkg, 0, $HEAD_LEN));
+        $context->userData->pkg = substr($context->userData->pkg, $HEAD_LEN);
+        return $pkgHeader;
     }
 
     public static function onInnerWorkerReceivePkg($gatewayServer,$connection,$msgPkg)

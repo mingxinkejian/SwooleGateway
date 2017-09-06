@@ -55,6 +55,11 @@ class AutoLoader
         {
             $class_file = __DIR__ . DIRECTORY_SEPARATOR . 'logic' . substr($class_path, strlen('Logic')) . '.php';
         }
+        else if(strpos($name, 'GPBMetadata\\') === 0)
+        {
+            //此处是为了处理Protobuf协议的
+            $class_file = __DIR__ . DIRECTORY_SEPARATOR . 'logic' . DIRECTORY_SEPARATOR . 'Protocol' . DIRECTORY_SEPARATOR . $class_path . '.php';
+        }
         else
         {
             if(self::$_autoloadRootPath)

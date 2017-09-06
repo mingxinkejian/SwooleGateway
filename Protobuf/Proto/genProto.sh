@@ -37,7 +37,7 @@ readFiles
 echo $READ_LINE_FILES
 echo "\n${RED_COLOR}--------------------------------------${RES}"
 echo "Generate Proto To Server"
-./protoc --php_out=../Server/ $READ_LINE_FILES
+./protoc --proto_path=./ --php_out=../Server/ $READ_LINE_FILES
 echo "Generate Proto To Server END"
 sleep 2
 echo "${RED_COLOR}--------------------------------------${RES}"
