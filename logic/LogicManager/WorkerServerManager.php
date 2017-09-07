@@ -6,14 +6,13 @@ use Logic\MsgHandler\LoginMsgHandler;
 /**
 * 
 */
-class ServerManager extends Singleton
+class WorkerServerManager extends Singleton
 {
     private $_logicMapper = array();
     public $dbManager;
 
     public function init()
     {
-        echo 'ServerManager init ' . PHP_EOL;
         
     }
 

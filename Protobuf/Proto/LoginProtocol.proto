@@ -1,6 +1,15 @@
+//////////////////////////////////////////////////////
+//游戏服务器登陆协议                                  
+//Author    : Ming ming
+//Date      : 2017-09-07 09:44:37
+//Desc      : 
+//////////////////////////////////////////////////////
+
 syntax="proto3";
 
 package Logic.Protocol;
+
+import "PlayerProtocol.proto";
 
 //玩家登陆类型
 enum LoginType
@@ -42,6 +51,15 @@ message PlayerEnvInfo
     bytes deviceId          = 15;   //设备ID
 
 };
+//心跳包信息
+//心跳包只有响应，没有请求
+message PingResp
+{
+    int32 ret       = 1;    //返回值
+    uint64 svrTime  = 2;    //服务器时间
+    bytes extData   = 3;    //扩展信息
+}
+
 //登陆请求
 message LoginReq
 {
@@ -59,5 +77,11 @@ message LoginReq
 //登陆响应
 message LoginResp
 {
-
+    int32 ret                   = 1;    //返回码
+    PlayerInfo playerInfo       = 2;    //玩家信息
+    uint64 svrTime              = 3;    //服务器时间
+    bytes version               = 4;    //配置文件版本信息
+    bytes extMsg                = 5;    //额外信息的返回
 };
+
+//

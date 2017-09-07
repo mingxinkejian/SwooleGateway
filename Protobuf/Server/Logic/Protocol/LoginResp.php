@@ -15,10 +15,170 @@ use Google\Protobuf\Internal\GPBUtil;
  */
 class LoginResp extends \Google\Protobuf\Internal\Message
 {
+    /**
+     *返回码
+     *
+     * Generated from protobuf field <code>int32 ret = 1;</code>
+     */
+    private $ret = 0;
+    /**
+     *玩家信息
+     *
+     * Generated from protobuf field <code>.Logic.Protocol.PlayerInfo playerInfo = 2;</code>
+     */
+    private $playerInfo = null;
+    /**
+     *服务器时间
+     *
+     * Generated from protobuf field <code>uint64 svrTime = 3;</code>
+     */
+    private $svrTime = 0;
+    /**
+     *配置文件版本信息
+     *
+     * Generated from protobuf field <code>bytes version = 4;</code>
+     */
+    private $version = '';
+    /**
+     *额外信息的返回
+     *
+     * Generated from protobuf field <code>bytes extMsg = 5;</code>
+     */
+    private $extMsg = '';
 
     public function __construct() {
         \GPBMetadata\LoginProtocol::initOnce();
         parent::__construct();
+    }
+
+    /**
+     *返回码
+     *
+     * Generated from protobuf field <code>int32 ret = 1;</code>
+     * @return int
+     */
+    public function getRet()
+    {
+        return $this->ret;
+    }
+
+    /**
+     *返回码
+     *
+     * Generated from protobuf field <code>int32 ret = 1;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setRet($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->ret = $var;
+
+        return $this;
+    }
+
+    /**
+     *玩家信息
+     *
+     * Generated from protobuf field <code>.Logic.Protocol.PlayerInfo playerInfo = 2;</code>
+     * @return \Logic\Protocol\PlayerInfo
+     */
+    public function getPlayerInfo()
+    {
+        return $this->playerInfo;
+    }
+
+    /**
+     *玩家信息
+     *
+     * Generated from protobuf field <code>.Logic.Protocol.PlayerInfo playerInfo = 2;</code>
+     * @param \Logic\Protocol\PlayerInfo $var
+     * @return $this
+     */
+    public function setPlayerInfo($var)
+    {
+        GPBUtil::checkMessage($var, \Logic\Protocol\PlayerInfo::class);
+        $this->playerInfo = $var;
+
+        return $this;
+    }
+
+    /**
+     *服务器时间
+     *
+     * Generated from protobuf field <code>uint64 svrTime = 3;</code>
+     * @return int|string
+     */
+    public function getSvrTime()
+    {
+        return $this->svrTime;
+    }
+
+    /**
+     *服务器时间
+     *
+     * Generated from protobuf field <code>uint64 svrTime = 3;</code>
+     * @param int|string $var
+     * @return $this
+     */
+    public function setSvrTime($var)
+    {
+        GPBUtil::checkUint64($var);
+        $this->svrTime = $var;
+
+        return $this;
+    }
+
+    /**
+     *配置文件版本信息
+     *
+     * Generated from protobuf field <code>bytes version = 4;</code>
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     *配置文件版本信息
+     *
+     * Generated from protobuf field <code>bytes version = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setVersion($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->version = $var;
+
+        return $this;
+    }
+
+    /**
+     *额外信息的返回
+     *
+     * Generated from protobuf field <code>bytes extMsg = 5;</code>
+     * @return string
+     */
+    public function getExtMsg()
+    {
+        return $this->extMsg;
+    }
+
+    /**
+     *额外信息的返回
+     *
+     * Generated from protobuf field <code>bytes extMsg = 5;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setExtMsg($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->extMsg = $var;
+
+        return $this;
     }
 
 }

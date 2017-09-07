@@ -1,0 +1,26 @@
+//////////////////////////////////////////////////////
+//游戏服务器协议ID                               
+//Author    : Ming ming
+//Date      : 2017-09-07 09:44:37
+//Desc      : 
+//////////////////////////////////////////////////////
+
+syntax="proto3";
+
+package Logic.Protocol;
+
+enum ProtocolCmd
+{
+    CMD_TYPE                      = 0x0;
+    CMD_PING                      = 0x01;       //心跳
+    CMD_PONG                      = 0x02;
+
+    //4位作为CMD命令，不同开头功能不同
+    MESSAGE_TYPE_SYSTEM           = 0x1000;     
+    CMD_LOGIN_REQ                 = 0x1001;     //登陆
+    CMD_LOGIN_RESP                = 0x1002;
+
+    CMD_LOGOUT_REQ                = 0x1003;     //退出
+    CMD_LOGOUT_RESP               = 0x1004;
+
+}

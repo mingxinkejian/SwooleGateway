@@ -17,7 +17,7 @@ namespace Logic;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Context\Context;
 use SwooleGateway\Common\CmdDefine;
-use Logic\LogicManager\ServerManager;
+use Logic\LogicManager\WorkerServerManager;
 use SwooleGateway\Logger\LoggerLevel;
 /**
 * 
@@ -31,7 +31,7 @@ class WorkerLogic
     public static function onServerStart($workerServer)
     {
         //消息处理注册到管理器中
-        ServerManager::getInstance()->registerMsgHandlerMapper();
+        WorkerServerManager::getInstance()->registerMsgHandlerMapper();
     }
 
     public static function clientConnect()
@@ -42,7 +42,7 @@ class WorkerLogic
     public static function clientMessage($workerServer,$connection,$msgPkg)
     {
         $protocolCmd = unpack("NprotocolCmd", substr($msgPkg, 0,4));
-        $handler = ServerManager::getInstance()->getMsgHandler($protocolCmd['protocolCmd']);
+        $handler = WorkerServerManager::getInstance()->getMsgHandler($protocolCmd['protocolCmd']);
         if(!empty($handler))
         {
             $handler->_server = $workerServer;
@@ -59,6 +59,19 @@ class WorkerLogic
         // $gatewayData['body']            = json_decode($msgPkg,true)['swooleClient'];
 
         // Context::$connection->send($gatewayData);
+    }
+    
+    /**
+     * 拆取包头
+     * @param  [type] $context [description]
+     * @return [type]          [description]
+     */
+    public static function getClientPkgHeader($context)
+    {
+        $HEAD_LEN = 22;
+        $pkgHeader = unpack("nversion/NappId/ngatewayCmd/NprotocolCmd/ncheckSum/NmsgIdx", substr($context->userData->pkg, 0, $HEAD_LEN));
+        $context->userData->pkg = substr($context->userData->pkg, $HEAD_LEN);
+        return $pkgHeader;
     }
 
     public static function clientClose()

@@ -5,7 +5,7 @@ use Logic\MsgHandler\GatewayMsgHandler\PingMsgHandler;
 use Logic\MsgHandler\GatewayMsgHandler\AuthLoginMsgHandler;
 use SwooleGateway\DataBase\Redis;
 use SwooleGateway\Common\CmdDefine;
-use Logic\Define\LogicCmdDefine;
+use Logic\Protocol\ProtocolCmd;
 
 class GatewayServerManager extends Singleton
 {
@@ -14,7 +14,7 @@ class GatewayServerManager extends Singleton
 
     public function init()
     {
-        echo 'GatewayServerManager init ' . PHP_EOL;
+
     }
     /**
      * 将业务逻辑注册根据CMD_ID注册

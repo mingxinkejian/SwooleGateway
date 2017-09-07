@@ -1,1 +1,3 @@
 LoginProtocol.proto
+ProtocolCmd.proto
+PlayerProtocol.proto

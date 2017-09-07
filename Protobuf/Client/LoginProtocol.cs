@@ -22,32 +22,38 @@ namespace Logic.Protocol {
     static LoginProtocolReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChNMb2dpblByb3RvY29sLnByb3RvEg5Mb2dpYy5Qcm90b2NvbCKrAgoNUGxh",
-            "eWVyRW52SW5mbxIVCg1jbGllbnRWZXJzaW9uGAEgASgMEhIKCnN5c3RlbVNv",
-            "ZnQYAiABKAwSFgoOc3lzdGVtSGFyZHdhcmUYAyABKAwSDwoHdGVsZWNvbRgE",
-            "IAEoDBIPCgduZXR3b3JrGAUgASgMEhMKC3NjcmVlbldpZHRoGAYgASgMEhQK",
-            "DHNjcmVlbkhlaWdodBgHIAEoDBIPCgdkZW5zaXR5GAggASgMEg8KB2NoYW5u",
-            "ZWwYCSABKAwSDAoEdXVpZBgKIAEoDBITCgtjcHVIYXJkd2FyZRgLIAEoDBIO",
-            "CgZtZW1vcnkYDCABKAwSEAoIZ2xSZW5kZXIYDSABKAwSEQoJZ2xWZXJzaW9u",
-            "GA4gASgMEhAKCGRldmljZUlkGA8gASgMIpACCghMb2dpblJlcRIQCgh1c2Vy",
-            "bmFtZRgBIAEoDBIQCghwYXNzd29yZBgCIAEoDBIOCgZvcGVuSWQYAyABKAwS",
-            "CwoDdUlkGAQgASgFEhIKCmxvZ2luVG9rZW4YBSABKAwSLAoJbG9naW5UeXBl",
-            "GAYgASgOMhkuTG9naWMuUHJvdG9jb2wuTG9naW5UeXBlEjQKDXBsYXllckVu",
-            "dkluZm8YByABKAsyHS5Mb2dpYy5Qcm90b2NvbC5QbGF5ZXJFbnZJbmZvEhIK",
-            "CmRldmljZUNvZGUYCCABKAwSJgoGb3NUeXBlGAkgASgOMhYuTG9naWMuUHJv",
-            "dG9jb2wuT1NUeXBlEg8KB2NoYW5uZWwYCiABKA0iCwoJTG9naW5SZXNwKo0B",
-            "CglMb2dpblR5cGUSFgoSTE9HSU5fVFlQRV9ERUZBVUxUEAASFgoSTE9HSU5f",
-            "VFlQRV9NU0RLX1FREAESFgoSTE9HSU5fVFlQRV9NU0RLX1dYEAISGQoVTE9H",
-            "SU5fVFlQRV9NU0RLX0dVRVNUEAMSHQoZTE9HSU5fVFlQRV9USElSRF9QTEFU",
-            "Rk9STRAEKnUKBk9TVHlwZRITCg9PU19UWVBFX0RFRkFVTFQQABIOCgpPU19U",
-            "WVBFX1BDEAESDwoLT1NfVFlQRV9NQUMQAhIPCgtPU19UWVBFX1dFQhADEg8K",
-            "C09TX1RZUEVfSU9TEAQSEwoPT1NfVFlQRV9BTkRST0lEEAViBnByb3RvMw=="));
+            "ChNMb2dpblByb3RvY29sLnByb3RvEg5Mb2dpYy5Qcm90b2NvbBoUUGxheWVy",
+            "UHJvdG9jb2wucHJvdG8iqwIKDVBsYXllckVudkluZm8SFQoNY2xpZW50VmVy",
+            "c2lvbhgBIAEoDBISCgpzeXN0ZW1Tb2Z0GAIgASgMEhYKDnN5c3RlbUhhcmR3",
+            "YXJlGAMgASgMEg8KB3RlbGVjb20YBCABKAwSDwoHbmV0d29yaxgFIAEoDBIT",
+            "CgtzY3JlZW5XaWR0aBgGIAEoDBIUCgxzY3JlZW5IZWlnaHQYByABKAwSDwoH",
+            "ZGVuc2l0eRgIIAEoDBIPCgdjaGFubmVsGAkgASgMEgwKBHV1aWQYCiABKAwS",
+            "EwoLY3B1SGFyZHdhcmUYCyABKAwSDgoGbWVtb3J5GAwgASgMEhAKCGdsUmVu",
+            "ZGVyGA0gASgMEhEKCWdsVmVyc2lvbhgOIAEoDBIQCghkZXZpY2VJZBgPIAEo",
+            "DCI5CghQaW5nUmVzcBILCgNyZXQYASABKAUSDwoHc3ZyVGltZRgCIAEoBBIP",
+            "CgdleHREYXRhGAMgASgMIpACCghMb2dpblJlcRIQCgh1c2VybmFtZRgBIAEo",
+            "DBIQCghwYXNzd29yZBgCIAEoDBIOCgZvcGVuSWQYAyABKAwSCwoDdUlkGAQg",
+            "ASgFEhIKCmxvZ2luVG9rZW4YBSABKAwSLAoJbG9naW5UeXBlGAYgASgOMhku",
+            "TG9naWMuUHJvdG9jb2wuTG9naW5UeXBlEjQKDXBsYXllckVudkluZm8YByAB",
+            "KAsyHS5Mb2dpYy5Qcm90b2NvbC5QbGF5ZXJFbnZJbmZvEhIKCmRldmljZUNv",
+            "ZGUYCCABKAwSJgoGb3NUeXBlGAkgASgOMhYuTG9naWMuUHJvdG9jb2wuT1NU",
+            "eXBlEg8KB2NoYW5uZWwYCiABKA0iegoJTG9naW5SZXNwEgsKA3JldBgBIAEo",
+            "BRIuCgpwbGF5ZXJJbmZvGAIgASgLMhouTG9naWMuUHJvdG9jb2wuUGxheWVy",
+            "SW5mbxIPCgdzdnJUaW1lGAMgASgEEg8KB3ZlcnNpb24YBCABKAwSDgoGZXh0",
+            "TXNnGAUgASgMKo0BCglMb2dpblR5cGUSFgoSTE9HSU5fVFlQRV9ERUZBVUxU",
+            "EAASFgoSTE9HSU5fVFlQRV9NU0RLX1FREAESFgoSTE9HSU5fVFlQRV9NU0RL",
+            "X1dYEAISGQoVTE9HSU5fVFlQRV9NU0RLX0dVRVNUEAMSHQoZTE9HSU5fVFlQ",
+            "RV9USElSRF9QTEFURk9STRAEKnUKBk9TVHlwZRITCg9PU19UWVBFX0RFRkFV",
+            "TFQQABIOCgpPU19UWVBFX1BDEAESDwoLT1NfVFlQRV9NQUMQAhIPCgtPU19U",
+            "WVBFX1dFQhADEg8KC09TX1RZUEVfSU9TEAQSEwoPT1NfVFlQRV9BTkRST0lE",
+            "EAViBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::Logic.Protocol.PlayerProtocolReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Logic.Protocol.LoginType), typeof(global::Logic.Protocol.OSType), }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PlayerEnvInfo), global::Logic.Protocol.PlayerEnvInfo.Parser, new[]{ "ClientVersion", "SystemSoft", "SystemHardware", "Telecom", "Network", "ScreenWidth", "ScreenHeight", "Density", "Channel", "Uuid", "CpuHardware", "Memory", "GlRender", "GlVersion", "DeviceId" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PingResp), global::Logic.Protocol.PingResp.Parser, new[]{ "Ret", "SvrTime", "ExtData" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginReq), global::Logic.Protocol.LoginReq.Parser, new[]{ "Username", "Password", "OpenId", "UId", "LoginToken", "LoginType", "PlayerEnvInfo", "DeviceCode", "OsType", "Channel" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginResp), global::Logic.Protocol.LoginResp.Parser, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginResp), global::Logic.Protocol.LoginResp.Parser, new[]{ "Ret", "PlayerInfo", "SvrTime", "Version", "ExtMsg" }, null, null, null)
           }));
     }
     #endregion
@@ -671,6 +677,192 @@ namespace Logic.Protocol {
   }
 
   /// <summary>
+  ///心跳包信息
+  ///心跳包只有响应，没有请求
+  /// </summary>
+  public sealed partial class PingResp : pb::IMessage<PingResp> {
+    private static readonly pb::MessageParser<PingResp> _parser = new pb::MessageParser<PingResp>(() => new PingResp());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<PingResp> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PingResp() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PingResp(PingResp other) : this() {
+      ret_ = other.ret_;
+      svrTime_ = other.svrTime_;
+      extData_ = other.extData_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PingResp Clone() {
+      return new PingResp(this);
+    }
+
+    /// <summary>Field number for the "ret" field.</summary>
+    public const int RetFieldNumber = 1;
+    private int ret_;
+    /// <summary>
+    ///返回值
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Ret {
+      get { return ret_; }
+      set {
+        ret_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "svrTime" field.</summary>
+    public const int SvrTimeFieldNumber = 2;
+    private ulong svrTime_;
+    /// <summary>
+    ///服务器时间
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong SvrTime {
+      get { return svrTime_; }
+      set {
+        svrTime_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "extData" field.</summary>
+    public const int ExtDataFieldNumber = 3;
+    private pb::ByteString extData_ = pb::ByteString.Empty;
+    /// <summary>
+    ///扩展信息
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString ExtData {
+      get { return extData_; }
+      set {
+        extData_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as PingResp);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(PingResp other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Ret != other.Ret) return false;
+      if (SvrTime != other.SvrTime) return false;
+      if (ExtData != other.ExtData) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Ret != 0) hash ^= Ret.GetHashCode();
+      if (SvrTime != 0UL) hash ^= SvrTime.GetHashCode();
+      if (ExtData.Length != 0) hash ^= ExtData.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Ret != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Ret);
+      }
+      if (SvrTime != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(SvrTime);
+      }
+      if (ExtData.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteBytes(ExtData);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Ret != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Ret);
+      }
+      if (SvrTime != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SvrTime);
+      }
+      if (ExtData.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(ExtData);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(PingResp other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Ret != 0) {
+        Ret = other.Ret;
+      }
+      if (other.SvrTime != 0UL) {
+        SvrTime = other.SvrTime;
+      }
+      if (other.ExtData.Length != 0) {
+        ExtData = other.ExtData;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 8: {
+            Ret = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            SvrTime = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            ExtData = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  /// <summary>
   ///登陆请求
   /// </summary>
   public sealed partial class LoginReq : pb::IMessage<LoginReq> {
@@ -680,7 +872,7 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1088,7 +1280,7 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1105,11 +1297,86 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LoginResp(LoginResp other) : this() {
+      ret_ = other.ret_;
+      PlayerInfo = other.playerInfo_ != null ? other.PlayerInfo.Clone() : null;
+      svrTime_ = other.svrTime_;
+      version_ = other.version_;
+      extMsg_ = other.extMsg_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LoginResp Clone() {
       return new LoginResp(this);
+    }
+
+    /// <summary>Field number for the "ret" field.</summary>
+    public const int RetFieldNumber = 1;
+    private int ret_;
+    /// <summary>
+    ///返回码
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Ret {
+      get { return ret_; }
+      set {
+        ret_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "playerInfo" field.</summary>
+    public const int PlayerInfoFieldNumber = 2;
+    private global::Logic.Protocol.PlayerInfo playerInfo_;
+    /// <summary>
+    ///玩家信息
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.PlayerInfo PlayerInfo {
+      get { return playerInfo_; }
+      set {
+        playerInfo_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "svrTime" field.</summary>
+    public const int SvrTimeFieldNumber = 3;
+    private ulong svrTime_;
+    /// <summary>
+    ///服务器时间
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong SvrTime {
+      get { return svrTime_; }
+      set {
+        svrTime_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "version" field.</summary>
+    public const int VersionFieldNumber = 4;
+    private pb::ByteString version_ = pb::ByteString.Empty;
+    /// <summary>
+    ///配置文件版本信息
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString Version {
+      get { return version_; }
+      set {
+        version_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "extMsg" field.</summary>
+    public const int ExtMsgFieldNumber = 5;
+    private pb::ByteString extMsg_ = pb::ByteString.Empty;
+    /// <summary>
+    ///额外信息的返回
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString ExtMsg {
+      get { return extMsg_; }
+      set {
+        extMsg_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1125,12 +1392,22 @@ namespace Logic.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Ret != other.Ret) return false;
+      if (!object.Equals(PlayerInfo, other.PlayerInfo)) return false;
+      if (SvrTime != other.SvrTime) return false;
+      if (Version != other.Version) return false;
+      if (ExtMsg != other.ExtMsg) return false;
       return true;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (Ret != 0) hash ^= Ret.GetHashCode();
+      if (playerInfo_ != null) hash ^= PlayerInfo.GetHashCode();
+      if (SvrTime != 0UL) hash ^= SvrTime.GetHashCode();
+      if (Version.Length != 0) hash ^= Version.GetHashCode();
+      if (ExtMsg.Length != 0) hash ^= ExtMsg.GetHashCode();
       return hash;
     }
 
@@ -1141,11 +1418,46 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+      if (Ret != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Ret);
+      }
+      if (playerInfo_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(PlayerInfo);
+      }
+      if (SvrTime != 0UL) {
+        output.WriteRawTag(24);
+        output.WriteUInt64(SvrTime);
+      }
+      if (Version.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteBytes(Version);
+      }
+      if (ExtMsg.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteBytes(ExtMsg);
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (Ret != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Ret);
+      }
+      if (playerInfo_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerInfo);
+      }
+      if (SvrTime != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SvrTime);
+      }
+      if (Version.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Version);
+      }
+      if (ExtMsg.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(ExtMsg);
+      }
       return size;
     }
 
@@ -1153,6 +1465,24 @@ namespace Logic.Protocol {
     public void MergeFrom(LoginResp other) {
       if (other == null) {
         return;
+      }
+      if (other.Ret != 0) {
+        Ret = other.Ret;
+      }
+      if (other.playerInfo_ != null) {
+        if (playerInfo_ == null) {
+          playerInfo_ = new global::Logic.Protocol.PlayerInfo();
+        }
+        PlayerInfo.MergeFrom(other.PlayerInfo);
+      }
+      if (other.SvrTime != 0UL) {
+        SvrTime = other.SvrTime;
+      }
+      if (other.Version.Length != 0) {
+        Version = other.Version;
+      }
+      if (other.ExtMsg.Length != 0) {
+        ExtMsg = other.ExtMsg;
       }
     }
 
@@ -1164,6 +1494,29 @@ namespace Logic.Protocol {
           default:
             input.SkipLastField();
             break;
+          case 8: {
+            Ret = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            if (playerInfo_ == null) {
+              playerInfo_ = new global::Logic.Protocol.PlayerInfo();
+            }
+            input.ReadMessage(playerInfo_);
+            break;
+          }
+          case 24: {
+            SvrTime = input.ReadUInt64();
+            break;
+          }
+          case 34: {
+            Version = input.ReadBytes();
+            break;
+          }
+          case 42: {
+            ExtMsg = input.ReadBytes();
+            break;
+          }
         }
       }
     }

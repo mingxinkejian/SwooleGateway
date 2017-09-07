@@ -1,0 +1,35 @@
+//////////////////////////////////////////////////////
+//游戏服务器玩家相关协议                                  
+//Author    : Ming ming
+//Date      : 2017-09-07 09:45:11
+//Desc      : 
+//////////////////////////////////////////////////////
+
+syntax="proto3";
+
+package Logic.Protocol;
+
+//玩家信息
+message PlayerInfo
+{
+    uint32 uId                          = 1;    //uId
+    PlayerBasicInfo playerBasicInfo     = 2;    //基本信息
+}
+
+//玩家基本信息
+message PlayerBasicInfo
+{
+    bytes name              = 1;    //昵称
+    PlayerState state       = 2;    //状态
+    uint32 sex              = 3;    //性别
+    uint64 registTime       = 4;    //注册时间
+    uint64 lastLoginTime    = 5;    //上次登陆时间
+}
+
+enum PlayerState
+{
+    PLAYER_STATE_NORMAL     = 0;    //正常
+    PLAYER_STATE_FORBID     = 1;    //限制
+    PLAYER_STATE_BAN        = 2;    //封停
+    PLAYER_STATE_INIT       = 3;    //初始
+}
