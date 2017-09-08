@@ -16,11 +16,15 @@ enum ProtocolCmd
     CMD_PONG                      = 0x02;
 
     //4位作为CMD命令，不同开头功能不同
-    MESSAGE_TYPE_SYSTEM           = 0x1000;     
-    CMD_LOGIN_REQ                 = 0x1001;     //登陆
-    CMD_LOGIN_RESP                = 0x1002;
+    MESSAGE_TYPE_SYSTEM           = 0x1000;
 
-    CMD_LOGOUT_REQ                = 0x1003;     //退出
-    CMD_LOGOUT_RESP               = 0x1004;
+    CMD_REGIST_REQ                = 0x1001;    //注册
+    CMD_REGIST_RESP               = 0x1002;    
+
+    CMD_LOGIN_REQ                 = 0x1003;     //登陆
+    CMD_LOGIN_RESP                = 0x1004;
+
+    CMD_LOGOUT_REQ                = 0x1005;     //退出
+    CMD_LOGOUT_RESP               = 0x1006;
 
 }

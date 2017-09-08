@@ -8,13 +8,26 @@ use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Context\Context;
 use Logic\LogicManager\GatewayServerManager;
 
+use Logic\Protocol\ProtocolCmd;
+use Logic\Protocol\PingReq;
+use Logic\Protocol\PingResp;
+use Logic\Protocol\RetCode;
 /**
- * 登录验证
+ * 心跳
  */
 class PingMsgHandler extends MsgHandler
 {
-    public function handlerMsg($connection,$msgPkg)
+    public function registProtocols()
     {
-        $connection->send(CmdDefine::CMD_PONG);
+        $this->_protocolMappers[ProtocolCmd::CMD_PING] = MsgHandler::MSG_REQ_NAMESPACE . "PingReq";
+    }
+
+    public function handlerMsg($connection,$request,$context)
+    {
+        $pongResp = new PingResp();
+        $pongResp->setRet(RetCode::SUCCESS);
+        $pongResp->setSvrTime(microtime());
+
+        $connection->send(ProtocolCmd::CMD_PONG . $pongResp->serializeToString());
     }
 }

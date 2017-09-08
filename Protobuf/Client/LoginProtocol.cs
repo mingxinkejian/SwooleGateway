@@ -30,30 +30,48 @@ namespace Logic.Protocol {
             "ZGVuc2l0eRgIIAEoDBIPCgdjaGFubmVsGAkgASgMEgwKBHV1aWQYCiABKAwS",
             "EwoLY3B1SGFyZHdhcmUYCyABKAwSDgoGbWVtb3J5GAwgASgMEhAKCGdsUmVu",
             "ZGVyGA0gASgMEhEKCWdsVmVyc2lvbhgOIAEoDBIQCghkZXZpY2VJZBgPIAEo",
-            "DCI5CghQaW5nUmVzcBILCgNyZXQYASABKAUSDwoHc3ZyVGltZRgCIAEoBBIP",
-            "CgdleHREYXRhGAMgASgMIpACCghMb2dpblJlcRIQCgh1c2VybmFtZRgBIAEo",
-            "DBIQCghwYXNzd29yZBgCIAEoDBIOCgZvcGVuSWQYAyABKAwSCwoDdUlkGAQg",
-            "ASgFEhIKCmxvZ2luVG9rZW4YBSABKAwSLAoJbG9naW5UeXBlGAYgASgOMhku",
-            "TG9naWMuUHJvdG9jb2wuTG9naW5UeXBlEjQKDXBsYXllckVudkluZm8YByAB",
-            "KAsyHS5Mb2dpYy5Qcm90b2NvbC5QbGF5ZXJFbnZJbmZvEhIKCmRldmljZUNv",
-            "ZGUYCCABKAwSJgoGb3NUeXBlGAkgASgOMhYuTG9naWMuUHJvdG9jb2wuT1NU",
-            "eXBlEg8KB2NoYW5uZWwYCiABKA0iegoJTG9naW5SZXNwEgsKA3JldBgBIAEo",
-            "BRIuCgpwbGF5ZXJJbmZvGAIgASgLMhouTG9naWMuUHJvdG9jb2wuUGxheWVy",
-            "SW5mbxIPCgdzdnJUaW1lGAMgASgEEg8KB3ZlcnNpb24YBCABKAwSDgoGZXh0",
-            "TXNnGAUgASgMKo0BCglMb2dpblR5cGUSFgoSTE9HSU5fVFlQRV9ERUZBVUxU",
-            "EAASFgoSTE9HSU5fVFlQRV9NU0RLX1FREAESFgoSTE9HSU5fVFlQRV9NU0RL",
-            "X1dYEAISGQoVTE9HSU5fVFlQRV9NU0RLX0dVRVNUEAMSHQoZTE9HSU5fVFlQ",
-            "RV9USElSRF9QTEFURk9STRAEKnUKBk9TVHlwZRITCg9PU19UWVBFX0RFRkFV",
-            "TFQQABIOCgpPU19UWVBFX1BDEAESDwoLT1NfVFlQRV9NQUMQAhIPCgtPU19U",
-            "WVBFX1dFQhADEg8KC09TX1RZUEVfSU9TEAQSEwoPT1NfVFlQRV9BTkRST0lE",
-            "EAViBnByb3RvMw=="));
+            "DCIWCgdQaW5nUmVxEgsKA3VJZBgBIAEoBSI5CghQaW5nUmVzcBILCgNyZXQY",
+            "ASABKAUSDwoHc3ZyVGltZRgCIAEoBBIPCgdleHREYXRhGAMgASgMItwBCglS",
+            "ZWdpc3RSZXESEAoIdXNlcm5hbWUYASABKAwSEAoIcGFzc3dvcmQYAiABKAwS",
+            "DgoGb3BlbklkGAMgASgMEiwKCWxvZ2luVHlwZRgEIAEoDjIZLkxvZ2ljLlBy",
+            "b3RvY29sLkxvZ2luVHlwZRI0Cg1wbGF5ZXJFbnZJbmZvGAUgASgLMh0uTG9n",
+            "aWMuUHJvdG9jb2wuUGxheWVyRW52SW5mbxImCgZvc1R5cGUYBiABKA4yFi5M",
+            "b2dpYy5Qcm90b2NvbC5PU1R5cGUSDwoHY2hhbm5lbBgHIAEoBSI6CgpSZWdp",
+            "c3RSZXNwEgsKA3JldBgBIAEoBRILCgN1SWQYAiABKAUSEgoKbG9naW5Ub2tl",
+            "bhgDIAEoDCLJAQoLQWNjb3VudEluZm8SCwoDdUlkGAEgASgFEhAKCHVzZXJu",
+            "YW1lGAIgASgMEhAKCHBhc3N3b3JkGAMgASgMEg4KBm9wZW5JZBgEIAEoDBIs",
+            "Cglsb2dpblR5cGUYBSABKA4yGS5Mb2dpYy5Qcm90b2NvbC5Mb2dpblR5cGUS",
+            "JgoGb3NUeXBlGAYgASgOMhYuTG9naWMuUHJvdG9jb2wuT1NUeXBlEg8KB2No",
+            "YW5uZWwYByABKAUSEgoKcmVnaXN0VGltZRgIIAEoBCKfAgoITG9naW5SZXES",
+            "EAoIdXNlcm5hbWUYASABKAwSEAoIcGFzc3dvcmQYAiABKAwSDgoGb3Blbklk",
+            "GAMgASgMEgsKA3VJZBgEIAEoBRISCgpsb2dpblRva2VuGAUgASgMEiwKCWxv",
+            "Z2luVHlwZRgGIAEoDjIZLkxvZ2ljLlByb3RvY29sLkxvZ2luVHlwZRI0Cg1w",
+            "bGF5ZXJFbnZJbmZvGAcgASgLMh0uTG9naWMuUHJvdG9jb2wuUGxheWVyRW52",
+            "SW5mbxISCgpkZXZpY2VDb2RlGAggASgMEiYKBm9zVHlwZRgJIAEoDjIWLkxv",
+            "Z2ljLlByb3RvY29sLk9TVHlwZRIPCgdjaGFubmVsGAogASgFEg0KBXN2cklk",
+            "GAsgASgFInoKCUxvZ2luUmVzcBILCgNyZXQYASABKAUSLgoKcGxheWVySW5m",
+            "bxgCIAEoCzIaLkxvZ2ljLlByb3RvY29sLlBsYXllckluZm8SDwoHc3ZyVGlt",
+            "ZRgDIAEoBBIPCgd2ZXJzaW9uGAQgASgMEg4KBmV4dE1zZxgFIAEoDCIYCglM",
+            "b2dvdXRSZXESCwoDdUlkGAEgASgFIhkKCkxvZ291dFJlc3ASCwoDcmV0GAEg",
+            "ASgFKogBCglMb2dpblR5cGUSFgoSTE9HSU5fVFlQRV9BQ0NPVU5UEAASFgoS",
+            "TE9HSU5fVFlQRV9NU0RLX1FREAESFgoSTE9HSU5fVFlQRV9NU0RLX1dYEAIS",
+            "FAoQTE9HSU5fVFlQRV9HVUVTVBADEh0KGUxPR0lOX1RZUEVfVEhJUkRfUExB",
+            "VEZPUk0QBCp1CgZPU1R5cGUSEwoPT1NfVFlQRV9ERUZBVUxUEAASDgoKT1Nf",
+            "VFlQRV9QQxABEg8KC09TX1RZUEVfTUFDEAISDwoLT1NfVFlQRV9XRUIQAxIP",
+            "CgtPU19UWVBFX0lPUxAEEhMKD09TX1RZUEVfQU5EUk9JRBAFYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Logic.Protocol.PlayerProtocolReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Logic.Protocol.LoginType), typeof(global::Logic.Protocol.OSType), }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PlayerEnvInfo), global::Logic.Protocol.PlayerEnvInfo.Parser, new[]{ "ClientVersion", "SystemSoft", "SystemHardware", "Telecom", "Network", "ScreenWidth", "ScreenHeight", "Density", "Channel", "Uuid", "CpuHardware", "Memory", "GlRender", "GlVersion", "DeviceId" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PingReq), global::Logic.Protocol.PingReq.Parser, new[]{ "UId" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PingResp), global::Logic.Protocol.PingResp.Parser, new[]{ "Ret", "SvrTime", "ExtData" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginReq), global::Logic.Protocol.LoginReq.Parser, new[]{ "Username", "Password", "OpenId", "UId", "LoginToken", "LoginType", "PlayerEnvInfo", "DeviceCode", "OsType", "Channel" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginResp), global::Logic.Protocol.LoginResp.Parser, new[]{ "Ret", "PlayerInfo", "SvrTime", "Version", "ExtMsg" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.RegistReq), global::Logic.Protocol.RegistReq.Parser, new[]{ "Username", "Password", "OpenId", "LoginType", "PlayerEnvInfo", "OsType", "Channel" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.RegistResp), global::Logic.Protocol.RegistResp.Parser, new[]{ "Ret", "UId", "LoginToken" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.AccountInfo), global::Logic.Protocol.AccountInfo.Parser, new[]{ "UId", "Username", "Password", "OpenId", "LoginType", "OsType", "Channel", "RegistTime" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginReq), global::Logic.Protocol.LoginReq.Parser, new[]{ "Username", "Password", "OpenId", "UId", "LoginToken", "LoginType", "PlayerEnvInfo", "DeviceCode", "OsType", "Channel", "SvrId" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LoginResp), global::Logic.Protocol.LoginResp.Parser, new[]{ "Ret", "PlayerInfo", "SvrTime", "Version", "ExtMsg" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LogoutReq), global::Logic.Protocol.LogoutReq.Parser, new[]{ "UId" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.LogoutResp), global::Logic.Protocol.LogoutResp.Parser, new[]{ "Ret" }, null, null, null)
           }));
     }
     #endregion
@@ -65,9 +83,9 @@ namespace Logic.Protocol {
   /// </summary>
   public enum LoginType {
     /// <summary>
-    ///默认不使用
+    ///默认账号体系
     /// </summary>
-    [pbr::OriginalName("LOGIN_TYPE_DEFAULT")] Default = 0,
+    [pbr::OriginalName("LOGIN_TYPE_ACCOUNT")] Account = 0,
     /// <summary>
     ///QQ平台
     /// </summary>
@@ -79,7 +97,7 @@ namespace Logic.Protocol {
     /// <summary>
     ///游客访问
     /// </summary>
-    [pbr::OriginalName("LOGIN_TYPE_MSDK_GUEST")] MsdkGuest = 3,
+    [pbr::OriginalName("LOGIN_TYPE_GUEST")] Guest = 3,
     /// <summary>
     ///第三方平台
     /// </summary>
@@ -680,6 +698,123 @@ namespace Logic.Protocol {
   ///心跳包信息
   ///心跳包只有响应，没有请求
   /// </summary>
+  public sealed partial class PingReq : pb::IMessage<PingReq> {
+    private static readonly pb::MessageParser<PingReq> _parser = new pb::MessageParser<PingReq>(() => new PingReq());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<PingReq> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PingReq() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PingReq(PingReq other) : this() {
+      uId_ = other.uId_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PingReq Clone() {
+      return new PingReq(this);
+    }
+
+    /// <summary>Field number for the "uId" field.</summary>
+    public const int UIdFieldNumber = 1;
+    private int uId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int UId {
+      get { return uId_; }
+      set {
+        uId_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as PingReq);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(PingReq other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (UId != other.UId) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (UId != 0) hash ^= UId.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (UId != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(UId);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (UId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(UId);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(PingReq other) {
+      if (other == null) {
+        return;
+      }
+      if (other.UId != 0) {
+        UId = other.UId;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 8: {
+            UId = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class PingResp : pb::IMessage<PingResp> {
     private static readonly pb::MessageParser<PingResp> _parser = new pb::MessageParser<PingResp>(() => new PingResp());
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -687,7 +822,7 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -863,6 +998,846 @@ namespace Logic.Protocol {
   }
 
   /// <summary>
+  ///注册请求
+  /// </summary>
+  public sealed partial class RegistReq : pb::IMessage<RegistReq> {
+    private static readonly pb::MessageParser<RegistReq> _parser = new pb::MessageParser<RegistReq>(() => new RegistReq());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RegistReq> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RegistReq() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RegistReq(RegistReq other) : this() {
+      username_ = other.username_;
+      password_ = other.password_;
+      openId_ = other.openId_;
+      loginType_ = other.loginType_;
+      PlayerEnvInfo = other.playerEnvInfo_ != null ? other.PlayerEnvInfo.Clone() : null;
+      osType_ = other.osType_;
+      channel_ = other.channel_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RegistReq Clone() {
+      return new RegistReq(this);
+    }
+
+    /// <summary>Field number for the "username" field.</summary>
+    public const int UsernameFieldNumber = 1;
+    private pb::ByteString username_ = pb::ByteString.Empty;
+    /// <summary>
+    ///用户名
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString Username {
+      get { return username_; }
+      set {
+        username_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 2;
+    private pb::ByteString password_ = pb::ByteString.Empty;
+    /// <summary>
+    ///密码
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString Password {
+      get { return password_; }
+      set {
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "openId" field.</summary>
+    public const int OpenIdFieldNumber = 3;
+    private pb::ByteString openId_ = pb::ByteString.Empty;
+    /// <summary>
+    ///openID
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString OpenId {
+      get { return openId_; }
+      set {
+        openId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "loginType" field.</summary>
+    public const int LoginTypeFieldNumber = 4;
+    private global::Logic.Protocol.LoginType loginType_ = 0;
+    /// <summary>
+    ///注册类型
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.LoginType LoginType {
+      get { return loginType_; }
+      set {
+        loginType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "playerEnvInfo" field.</summary>
+    public const int PlayerEnvInfoFieldNumber = 5;
+    private global::Logic.Protocol.PlayerEnvInfo playerEnvInfo_;
+    /// <summary>
+    ///玩家的机器相关信息（用于数据统计）
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.PlayerEnvInfo PlayerEnvInfo {
+      get { return playerEnvInfo_; }
+      set {
+        playerEnvInfo_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "osType" field.</summary>
+    public const int OsTypeFieldNumber = 6;
+    private global::Logic.Protocol.OSType osType_ = 0;
+    /// <summary>
+    ///玩家终端类型
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.OSType OsType {
+      get { return osType_; }
+      set {
+        osType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "channel" field.</summary>
+    public const int ChannelFieldNumber = 7;
+    private int channel_;
+    /// <summary>
+    ///第三方渠道号
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Channel {
+      get { return channel_; }
+      set {
+        channel_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RegistReq);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RegistReq other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Username != other.Username) return false;
+      if (Password != other.Password) return false;
+      if (OpenId != other.OpenId) return false;
+      if (LoginType != other.LoginType) return false;
+      if (!object.Equals(PlayerEnvInfo, other.PlayerEnvInfo)) return false;
+      if (OsType != other.OsType) return false;
+      if (Channel != other.Channel) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Username.Length != 0) hash ^= Username.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
+      if (OpenId.Length != 0) hash ^= OpenId.GetHashCode();
+      if (LoginType != 0) hash ^= LoginType.GetHashCode();
+      if (playerEnvInfo_ != null) hash ^= PlayerEnvInfo.GetHashCode();
+      if (OsType != 0) hash ^= OsType.GetHashCode();
+      if (Channel != 0) hash ^= Channel.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Username.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Username);
+      }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteBytes(Password);
+      }
+      if (OpenId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteBytes(OpenId);
+      }
+      if (LoginType != 0) {
+        output.WriteRawTag(32);
+        output.WriteEnum((int) LoginType);
+      }
+      if (playerEnvInfo_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(PlayerEnvInfo);
+      }
+      if (OsType != 0) {
+        output.WriteRawTag(48);
+        output.WriteEnum((int) OsType);
+      }
+      if (Channel != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(Channel);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Username.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Username);
+      }
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Password);
+      }
+      if (OpenId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(OpenId);
+      }
+      if (LoginType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) LoginType);
+      }
+      if (playerEnvInfo_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerEnvInfo);
+      }
+      if (OsType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) OsType);
+      }
+      if (Channel != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Channel);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RegistReq other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Username.Length != 0) {
+        Username = other.Username;
+      }
+      if (other.Password.Length != 0) {
+        Password = other.Password;
+      }
+      if (other.OpenId.Length != 0) {
+        OpenId = other.OpenId;
+      }
+      if (other.LoginType != 0) {
+        LoginType = other.LoginType;
+      }
+      if (other.playerEnvInfo_ != null) {
+        if (playerEnvInfo_ == null) {
+          playerEnvInfo_ = new global::Logic.Protocol.PlayerEnvInfo();
+        }
+        PlayerEnvInfo.MergeFrom(other.PlayerEnvInfo);
+      }
+      if (other.OsType != 0) {
+        OsType = other.OsType;
+      }
+      if (other.Channel != 0) {
+        Channel = other.Channel;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 10: {
+            Username = input.ReadBytes();
+            break;
+          }
+          case 18: {
+            Password = input.ReadBytes();
+            break;
+          }
+          case 26: {
+            OpenId = input.ReadBytes();
+            break;
+          }
+          case 32: {
+            loginType_ = (global::Logic.Protocol.LoginType) input.ReadEnum();
+            break;
+          }
+          case 42: {
+            if (playerEnvInfo_ == null) {
+              playerEnvInfo_ = new global::Logic.Protocol.PlayerEnvInfo();
+            }
+            input.ReadMessage(playerEnvInfo_);
+            break;
+          }
+          case 48: {
+            osType_ = (global::Logic.Protocol.OSType) input.ReadEnum();
+            break;
+          }
+          case 56: {
+            Channel = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  /// <summary>
+  ///注册响应
+  /// </summary>
+  public sealed partial class RegistResp : pb::IMessage<RegistResp> {
+    private static readonly pb::MessageParser<RegistResp> _parser = new pb::MessageParser<RegistResp>(() => new RegistResp());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RegistResp> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[4]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RegistResp() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RegistResp(RegistResp other) : this() {
+      ret_ = other.ret_;
+      uId_ = other.uId_;
+      loginToken_ = other.loginToken_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RegistResp Clone() {
+      return new RegistResp(this);
+    }
+
+    /// <summary>Field number for the "ret" field.</summary>
+    public const int RetFieldNumber = 1;
+    private int ret_;
+    /// <summary>
+    ///返回值
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Ret {
+      get { return ret_; }
+      set {
+        ret_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "uId" field.</summary>
+    public const int UIdFieldNumber = 2;
+    private int uId_;
+    /// <summary>
+    ///uId
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int UId {
+      get { return uId_; }
+      set {
+        uId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "loginToken" field.</summary>
+    public const int LoginTokenFieldNumber = 3;
+    private pb::ByteString loginToken_ = pb::ByteString.Empty;
+    /// <summary>
+    ///登陆Token，通常有登陆服务器的情况下，登陆服务器返回的Token，并用这个Token和网关进行验证
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString LoginToken {
+      get { return loginToken_; }
+      set {
+        loginToken_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RegistResp);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RegistResp other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Ret != other.Ret) return false;
+      if (UId != other.UId) return false;
+      if (LoginToken != other.LoginToken) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Ret != 0) hash ^= Ret.GetHashCode();
+      if (UId != 0) hash ^= UId.GetHashCode();
+      if (LoginToken.Length != 0) hash ^= LoginToken.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Ret != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Ret);
+      }
+      if (UId != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(UId);
+      }
+      if (LoginToken.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteBytes(LoginToken);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Ret != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Ret);
+      }
+      if (UId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(UId);
+      }
+      if (LoginToken.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(LoginToken);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RegistResp other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Ret != 0) {
+        Ret = other.Ret;
+      }
+      if (other.UId != 0) {
+        UId = other.UId;
+      }
+      if (other.LoginToken.Length != 0) {
+        LoginToken = other.LoginToken;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 8: {
+            Ret = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            UId = input.ReadInt32();
+            break;
+          }
+          case 26: {
+            LoginToken = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  /// <summary>
+  ///账号信息
+  /// </summary>
+  public sealed partial class AccountInfo : pb::IMessage<AccountInfo> {
+    private static readonly pb::MessageParser<AccountInfo> _parser = new pb::MessageParser<AccountInfo>(() => new AccountInfo());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<AccountInfo> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[5]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public AccountInfo() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public AccountInfo(AccountInfo other) : this() {
+      uId_ = other.uId_;
+      username_ = other.username_;
+      password_ = other.password_;
+      openId_ = other.openId_;
+      loginType_ = other.loginType_;
+      osType_ = other.osType_;
+      channel_ = other.channel_;
+      registTime_ = other.registTime_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public AccountInfo Clone() {
+      return new AccountInfo(this);
+    }
+
+    /// <summary>Field number for the "uId" field.</summary>
+    public const int UIdFieldNumber = 1;
+    private int uId_;
+    /// <summary>
+    ///uId
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int UId {
+      get { return uId_; }
+      set {
+        uId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "username" field.</summary>
+    public const int UsernameFieldNumber = 2;
+    private pb::ByteString username_ = pb::ByteString.Empty;
+    /// <summary>
+    ///用户名
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString Username {
+      get { return username_; }
+      set {
+        username_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 3;
+    private pb::ByteString password_ = pb::ByteString.Empty;
+    /// <summary>
+    ///密码
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString Password {
+      get { return password_; }
+      set {
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "openId" field.</summary>
+    public const int OpenIdFieldNumber = 4;
+    private pb::ByteString openId_ = pb::ByteString.Empty;
+    /// <summary>
+    ///openID
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString OpenId {
+      get { return openId_; }
+      set {
+        openId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "loginType" field.</summary>
+    public const int LoginTypeFieldNumber = 5;
+    private global::Logic.Protocol.LoginType loginType_ = 0;
+    /// <summary>
+    ///注册类型
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.LoginType LoginType {
+      get { return loginType_; }
+      set {
+        loginType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "osType" field.</summary>
+    public const int OsTypeFieldNumber = 6;
+    private global::Logic.Protocol.OSType osType_ = 0;
+    /// <summary>
+    ///终端类型
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.OSType OsType {
+      get { return osType_; }
+      set {
+        osType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "channel" field.</summary>
+    public const int ChannelFieldNumber = 7;
+    private int channel_;
+    /// <summary>
+    ///第三方渠道号
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Channel {
+      get { return channel_; }
+      set {
+        channel_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "registTime" field.</summary>
+    public const int RegistTimeFieldNumber = 8;
+    private ulong registTime_;
+    /// <summary>
+    ///注册时间
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong RegistTime {
+      get { return registTime_; }
+      set {
+        registTime_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as AccountInfo);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(AccountInfo other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (UId != other.UId) return false;
+      if (Username != other.Username) return false;
+      if (Password != other.Password) return false;
+      if (OpenId != other.OpenId) return false;
+      if (LoginType != other.LoginType) return false;
+      if (OsType != other.OsType) return false;
+      if (Channel != other.Channel) return false;
+      if (RegistTime != other.RegistTime) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (UId != 0) hash ^= UId.GetHashCode();
+      if (Username.Length != 0) hash ^= Username.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
+      if (OpenId.Length != 0) hash ^= OpenId.GetHashCode();
+      if (LoginType != 0) hash ^= LoginType.GetHashCode();
+      if (OsType != 0) hash ^= OsType.GetHashCode();
+      if (Channel != 0) hash ^= Channel.GetHashCode();
+      if (RegistTime != 0UL) hash ^= RegistTime.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (UId != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(UId);
+      }
+      if (Username.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteBytes(Username);
+      }
+      if (Password.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteBytes(Password);
+      }
+      if (OpenId.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteBytes(OpenId);
+      }
+      if (LoginType != 0) {
+        output.WriteRawTag(40);
+        output.WriteEnum((int) LoginType);
+      }
+      if (OsType != 0) {
+        output.WriteRawTag(48);
+        output.WriteEnum((int) OsType);
+      }
+      if (Channel != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(Channel);
+      }
+      if (RegistTime != 0UL) {
+        output.WriteRawTag(64);
+        output.WriteUInt64(RegistTime);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (UId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(UId);
+      }
+      if (Username.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Username);
+      }
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Password);
+      }
+      if (OpenId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(OpenId);
+      }
+      if (LoginType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) LoginType);
+      }
+      if (OsType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) OsType);
+      }
+      if (Channel != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Channel);
+      }
+      if (RegistTime != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RegistTime);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(AccountInfo other) {
+      if (other == null) {
+        return;
+      }
+      if (other.UId != 0) {
+        UId = other.UId;
+      }
+      if (other.Username.Length != 0) {
+        Username = other.Username;
+      }
+      if (other.Password.Length != 0) {
+        Password = other.Password;
+      }
+      if (other.OpenId.Length != 0) {
+        OpenId = other.OpenId;
+      }
+      if (other.LoginType != 0) {
+        LoginType = other.LoginType;
+      }
+      if (other.OsType != 0) {
+        OsType = other.OsType;
+      }
+      if (other.Channel != 0) {
+        Channel = other.Channel;
+      }
+      if (other.RegistTime != 0UL) {
+        RegistTime = other.RegistTime;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 8: {
+            UId = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            Username = input.ReadBytes();
+            break;
+          }
+          case 26: {
+            Password = input.ReadBytes();
+            break;
+          }
+          case 34: {
+            OpenId = input.ReadBytes();
+            break;
+          }
+          case 40: {
+            loginType_ = (global::Logic.Protocol.LoginType) input.ReadEnum();
+            break;
+          }
+          case 48: {
+            osType_ = (global::Logic.Protocol.OSType) input.ReadEnum();
+            break;
+          }
+          case 56: {
+            Channel = input.ReadInt32();
+            break;
+          }
+          case 64: {
+            RegistTime = input.ReadUInt64();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  /// <summary>
   ///登陆请求
   /// </summary>
   public sealed partial class LoginReq : pb::IMessage<LoginReq> {
@@ -872,7 +1847,7 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[6]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -899,6 +1874,7 @@ namespace Logic.Protocol {
       deviceCode_ = other.deviceCode_;
       osType_ = other.osType_;
       channel_ = other.channel_;
+      svrId_ = other.svrId_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1034,15 +2010,29 @@ namespace Logic.Protocol {
 
     /// <summary>Field number for the "channel" field.</summary>
     public const int ChannelFieldNumber = 10;
-    private uint channel_;
+    private int channel_;
     /// <summary>
     ///第三方渠道号
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public uint Channel {
+    public int Channel {
       get { return channel_; }
       set {
         channel_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "svrId" field.</summary>
+    public const int SvrIdFieldNumber = 11;
+    private int svrId_;
+    /// <summary>
+    ///玩家连接服务器ID
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int SvrId {
+      get { return svrId_; }
+      set {
+        svrId_ = value;
       }
     }
 
@@ -1069,6 +2059,7 @@ namespace Logic.Protocol {
       if (DeviceCode != other.DeviceCode) return false;
       if (OsType != other.OsType) return false;
       if (Channel != other.Channel) return false;
+      if (SvrId != other.SvrId) return false;
       return true;
     }
 
@@ -1085,6 +2076,7 @@ namespace Logic.Protocol {
       if (DeviceCode.Length != 0) hash ^= DeviceCode.GetHashCode();
       if (OsType != 0) hash ^= OsType.GetHashCode();
       if (Channel != 0) hash ^= Channel.GetHashCode();
+      if (SvrId != 0) hash ^= SvrId.GetHashCode();
       return hash;
     }
 
@@ -1133,7 +2125,11 @@ namespace Logic.Protocol {
       }
       if (Channel != 0) {
         output.WriteRawTag(80);
-        output.WriteUInt32(Channel);
+        output.WriteInt32(Channel);
+      }
+      if (SvrId != 0) {
+        output.WriteRawTag(88);
+        output.WriteInt32(SvrId);
       }
     }
 
@@ -1168,7 +2164,10 @@ namespace Logic.Protocol {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) OsType);
       }
       if (Channel != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Channel);
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Channel);
+      }
+      if (SvrId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(SvrId);
       }
       return size;
     }
@@ -1210,6 +2209,9 @@ namespace Logic.Protocol {
       }
       if (other.Channel != 0) {
         Channel = other.Channel;
+      }
+      if (other.SvrId != 0) {
+        SvrId = other.SvrId;
       }
     }
 
@@ -1261,7 +2263,11 @@ namespace Logic.Protocol {
             break;
           }
           case 80: {
-            Channel = input.ReadUInt32();
+            Channel = input.ReadInt32();
+            break;
+          }
+          case 88: {
+            SvrId = input.ReadInt32();
             break;
           }
         }
@@ -1280,7 +2286,7 @@ namespace Logic.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1515,6 +2521,246 @@ namespace Logic.Protocol {
           }
           case 42: {
             ExtMsg = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  /// <summary>
+  ///登出请求
+  /// </summary>
+  public sealed partial class LogoutReq : pb::IMessage<LogoutReq> {
+    private static readonly pb::MessageParser<LogoutReq> _parser = new pb::MessageParser<LogoutReq>(() => new LogoutReq());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<LogoutReq> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public LogoutReq() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public LogoutReq(LogoutReq other) : this() {
+      uId_ = other.uId_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public LogoutReq Clone() {
+      return new LogoutReq(this);
+    }
+
+    /// <summary>Field number for the "uId" field.</summary>
+    public const int UIdFieldNumber = 1;
+    private int uId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int UId {
+      get { return uId_; }
+      set {
+        uId_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as LogoutReq);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(LogoutReq other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (UId != other.UId) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (UId != 0) hash ^= UId.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (UId != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(UId);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (UId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(UId);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(LogoutReq other) {
+      if (other == null) {
+        return;
+      }
+      if (other.UId != 0) {
+        UId = other.UId;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 8: {
+            UId = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  /// <summary>
+  ///登出响应
+  /// </summary>
+  public sealed partial class LogoutResp : pb::IMessage<LogoutResp> {
+    private static readonly pb::MessageParser<LogoutResp> _parser = new pb::MessageParser<LogoutResp>(() => new LogoutResp());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<LogoutResp> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Logic.Protocol.LoginProtocolReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public LogoutResp() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public LogoutResp(LogoutResp other) : this() {
+      ret_ = other.ret_;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public LogoutResp Clone() {
+      return new LogoutResp(this);
+    }
+
+    /// <summary>Field number for the "ret" field.</summary>
+    public const int RetFieldNumber = 1;
+    private int ret_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Ret {
+      get { return ret_; }
+      set {
+        ret_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as LogoutResp);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(LogoutResp other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Ret != other.Ret) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Ret != 0) hash ^= Ret.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Ret != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Ret);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Ret != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Ret);
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(LogoutResp other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Ret != 0) {
+        Ret = other.Ret;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 8: {
+            Ret = input.ReadInt32();
             break;
           }
         }

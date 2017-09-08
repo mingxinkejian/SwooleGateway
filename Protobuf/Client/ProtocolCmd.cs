@@ -22,11 +22,12 @@ namespace Logic.Protocol {
     static ProtocolCmdReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChFQcm90b2NvbENtZC5wcm90bxIOTG9naWMuUHJvdG9jb2wqpQEKC1Byb3Rv",
+            "ChFQcm90b2NvbENtZC5wcm90bxIOTG9naWMuUHJvdG9jb2wq0AEKC1Byb3Rv",
             "Y29sQ21kEgwKCENNRF9UWVBFEAASDAoIQ01EX1BJTkcQARIMCghDTURfUE9O",
-            "RxACEhgKE01FU1NBR0VfVFlQRV9TWVNURU0QgCASEgoNQ01EX0xPR0lOX1JF",
-            "URCBIBITCg5DTURfTE9HSU5fUkVTUBCCIBITCg5DTURfTE9HT1VUX1JFURCD",
-            "IBIUCg9DTURfTE9HT1VUX1JFU1AQhCBiBnByb3RvMw=="));
+            "RxACEhgKE01FU1NBR0VfVFlQRV9TWVNURU0QgCASEwoOQ01EX1JFR0lTVF9S",
+            "RVEQgSASFAoPQ01EX1JFR0lTVF9SRVNQEIIgEhIKDUNNRF9MT0dJTl9SRVEQ",
+            "gyASEwoOQ01EX0xPR0lOX1JFU1AQhCASEwoOQ01EX0xPR09VVF9SRVEQhSAS",
+            "FAoPQ01EX0xPR09VVF9SRVNQEIYgYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Logic.Protocol.ProtocolCmd), }, null));
@@ -47,15 +48,20 @@ namespace Logic.Protocol {
     /// </summary>
     [pbr::OriginalName("MESSAGE_TYPE_SYSTEM")] MessageTypeSystem = 4096,
     /// <summary>
+    ///注册
+    /// </summary>
+    [pbr::OriginalName("CMD_REGIST_REQ")] CmdRegistReq = 4097,
+    [pbr::OriginalName("CMD_REGIST_RESP")] CmdRegistResp = 4098,
+    /// <summary>
     ///登陆
     /// </summary>
-    [pbr::OriginalName("CMD_LOGIN_REQ")] CmdLoginReq = 4097,
-    [pbr::OriginalName("CMD_LOGIN_RESP")] CmdLoginResp = 4098,
+    [pbr::OriginalName("CMD_LOGIN_REQ")] CmdLoginReq = 4099,
+    [pbr::OriginalName("CMD_LOGIN_RESP")] CmdLoginResp = 4100,
     /// <summary>
     ///退出
     /// </summary>
-    [pbr::OriginalName("CMD_LOGOUT_REQ")] CmdLogoutReq = 4099,
-    [pbr::OriginalName("CMD_LOGOUT_RESP")] CmdLogoutResp = 4100,
+    [pbr::OriginalName("CMD_LOGOUT_REQ")] CmdLogoutReq = 4101,
+    [pbr::OriginalName("CMD_LOGOUT_RESP")] CmdLogoutResp = 4102,
   }
 
   #endregion

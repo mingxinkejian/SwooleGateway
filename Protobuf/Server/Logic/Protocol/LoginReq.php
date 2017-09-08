@@ -72,9 +72,15 @@ class LoginReq extends \Google\Protobuf\Internal\Message
     /**
      *第三方渠道号
      *
-     * Generated from protobuf field <code>uint32 channel = 10;</code>
+     * Generated from protobuf field <code>int32 channel = 10;</code>
      */
     private $channel = 0;
+    /**
+     *玩家连接服务器ID
+     *
+     * Generated from protobuf field <code>int32 svrId = 11;</code>
+     */
+    private $svrId = 0;
 
     public function __construct() {
         \GPBMetadata\LoginProtocol::initOnce();
@@ -318,7 +324,7 @@ class LoginReq extends \Google\Protobuf\Internal\Message
     /**
      *第三方渠道号
      *
-     * Generated from protobuf field <code>uint32 channel = 10;</code>
+     * Generated from protobuf field <code>int32 channel = 10;</code>
      * @return int
      */
     public function getChannel()
@@ -329,14 +335,40 @@ class LoginReq extends \Google\Protobuf\Internal\Message
     /**
      *第三方渠道号
      *
-     * Generated from protobuf field <code>uint32 channel = 10;</code>
+     * Generated from protobuf field <code>int32 channel = 10;</code>
      * @param int $var
      * @return $this
      */
     public function setChannel($var)
     {
-        GPBUtil::checkUint32($var);
+        GPBUtil::checkInt32($var);
         $this->channel = $var;
+
+        return $this;
+    }
+
+    /**
+     *玩家连接服务器ID
+     *
+     * Generated from protobuf field <code>int32 svrId = 11;</code>
+     * @return int
+     */
+    public function getSvrId()
+    {
+        return $this->svrId;
+    }
+
+    /**
+     *玩家连接服务器ID
+     *
+     * Generated from protobuf field <code>int32 svrId = 11;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setSvrId($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->svrId = $var;
 
         return $this;
     }

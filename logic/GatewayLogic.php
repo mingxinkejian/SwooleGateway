@@ -18,6 +18,7 @@ use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Logger\LoggerLevel;
 use Logic\LogicManager\GatewayServerManager;
 use SwooleGateway\Server\Context\Context;
+use Logic\CommonDefine\CommonDefine;
 
 /**
 * 
@@ -28,6 +29,18 @@ class GatewayLogic
     {
         GatewayServerManager::getInstance()->registerMsgHandlerMapper();
         GatewayServerManager::getInstance()->initRedis($gatewayServer->_settings['redisConf']);
+
+        self::initRedis();
+    }
+
+    public static function initRedis()
+    {
+        //先初始化注册账号的Key
+        $registKeyExist = GatewayServerManager::getInstance()->redisManager->exists(CommonDefine::REDIS_KEY_REG_SEQUENCE);
+        if($registKeyExist == false)
+        {
+            GatewayServerManager::getInstance()->redisManager->set(CommonDefine::REDIS_KEY_REG_SEQUENCE,CommonDefine::UID_INIT);
+        }
     }
 
     public static function pingDB()
@@ -52,21 +65,37 @@ class GatewayLogic
     public static function onClientReceivePkg($gatewayServer,$connection,$context)
     {
         try {
-                //拆包
+            //拆包
             $clientPkgHeader = self::getClientPkgHeader($context);
-            switch ($clientPkgHeader['gatewayCmd'])
+            switch($clientPkgHeader['gatewayCmd'])
             {
                 case CmdDefine::CMD_CLIENT_GATEWAY_MESSAGE:
                     {
                         $handler = GatewayServerManager::getInstance()->getMsgHandler($clientPkgHeader['protocolCmd']);
                         if(!empty($handler))
                         {
-                            $context->userData->pkgHeader = $clientPkgHeader;
-                            $handler->_server = $gatewayServer;
-                            $handler->handlerMsg($connection, $context);
+                            //根据cmd创建Request
+                            $request = $handler->createRequest($clientPkgHeader['protocolCmd']);
+                            if(isset($request))
+                            {
+                                $context->userData->pkgHeader = $clientPkgHeader;
+                                $handler->_server = $gatewayServer;
+                                $handler->handlerMsg($connection, $request, $context);
+                            }
+                            else
+                            {
+                                //断开连接
+                                $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE, $connection, $connection->userData->gatewayHeader);
+                                $connection->close();
+                                $gatewayServer->_server->logger(LoggerLevel::ERROR,"protocolCmd 未注册");
+                            }
+                            
                         }
                         else
                         {
+                            //断开连接
+                            $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE, $connection, $connection->userData->gatewayHeader);
+                            $connection->close();
                             $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$clientPkgHeader['protocolCmd']}]的MsgHandler");
                         }
                     }
@@ -80,6 +109,9 @@ class GatewayLogic
         }
         catch (\Exception $e)
         {
+            //断开连接
+            $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE, $connection, $connection->userData->gatewayHeader);
+            $connection->close();
             $gatewayServer->_server->loger(LoggerLevel::ERROR, $e->getMessage());
         }      
     }

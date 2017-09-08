@@ -1,11 +1,14 @@
 <?php
 namespace Logic\LogicManager;
 
-use Logic\MsgHandler\GatewayMsgHandler\PingMsgHandler;
-use Logic\MsgHandler\GatewayMsgHandler\AuthLoginMsgHandler;
 use SwooleGateway\DataBase\Redis;
 use SwooleGateway\Common\CmdDefine;
 use Logic\Protocol\ProtocolCmd;
+
+use Logic\MsgHandler\GatewayMsgHandler\PingMsgHandler;
+use Logic\MsgHandler\GatewayMsgHandler\AuthLoginMsgHandler;
+use Logic\MsgHandler\GatewayMsgHandler\LogoutMsgHandler;
+use Logic\MsgHandler\GatewayMsgHandler\RegistMsgHandler;
 
 class GatewayServerManager extends Singleton
 {
@@ -23,8 +26,11 @@ class GatewayServerManager extends Singleton
     public function registerMsgHandlerMapper()
     {
         //遍历MsgHandler文件夹中的所有文件，并且获取处理类
-        $this->_logicMapper[CmdDefine::CMD_PING] = new PingMsgHandler(CmdDefine::CMD_PING);
-        $this->_logicMapper[LogicCmdDefine::LOGIC_CMD_LOGIN] = new AuthLoginMsghandler(LogicCmdDefine::LOGIC_CMD_LOGIN);
+        $this->_logicMapper[ProtocolCmd::CMD_PING]          = new PingMsgHandler(ProtocolCmd::CMD_PING);
+
+        $this->_logicMapper[ProtocolCmd::CMD_REGIST_REQ]    = new RegistMsgHandler(ProtocolCmd::CMD_REGIST_REQ);
+        $this->_logicMapper[ProtocolCmd::CMD_LOGIN_REQ]     = new AuthLoginMsghandler(ProtocolCmd::CMD_LOGIN_REQ);
+        $this->_logicMapper[ProtocolCmd::CMD_LOGOUT_REQ]    = new LogoutMsgHandler(ProtocolCmd::CMD_LOGOUT_REQ);
     }
 
     public function initRedis($redisConfig)
@@ -40,5 +46,11 @@ class GatewayServerManager extends Singleton
         }
 
         return null;
+    }
+
+    public function sendMsgToClient($clientConnection,$cmd,$msg)
+    {
+        $sendBody = $cmd . $msg;
+        $clientConnection->send($sendBody);
     }
 }

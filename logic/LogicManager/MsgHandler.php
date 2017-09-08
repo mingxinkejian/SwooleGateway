@@ -10,10 +10,42 @@ abstract class MsgHandler
 
     public $_server;
 
+    const MSG_REQ_NAMESPACE = "Logic\\Protocol\\";
+
+    public $_protocolMappers = array();
+
     public function __construct($msgId)
     {
         $this->_msgId = $msgId;
+        $this->registProtocols();
+    }
+    /**
+     * 消息处理函数
+     * @param  [type] $connection [description]
+     * @param  [type] $request    [description]
+     * @param  [type] $context    [description]
+     * @return [type]             [description]
+     */
+    public abstract function handlerMsg($connection,$request,$context);
+    /**
+     * 注册对应的请求协议
+     * @return [type] [description]
+     */
+    public abstract function registProtocols();
+    /**
+     * 根据cmd创建请求
+     * @param  [type] $protocolCmd [description]
+     * @return [type]              [description]
+     */
+    public function createRequest($protocolCmd)
+    {
+        //此处使用反射创建
+        if(isset($this->_protocolMappers[$protocolCmd]))
+        {
+            return new $this->_protocolMappers[$protocolCmd]();
+        }
+
+        return null;   
     }
 
-    public abstract function handlerMsg($connection,$msgPkg);
 }

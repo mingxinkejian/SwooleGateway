@@ -27,6 +27,12 @@ class PlayerInfo extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>.Logic.Protocol.PlayerBasicInfo playerBasicInfo = 2;</code>
      */
     private $playerBasicInfo = null;
+    /**
+     *状态
+     *
+     * Generated from protobuf field <code>.Logic.Protocol.PlayerState state = 3;</code>
+     */
+    private $state = 0;
 
     public function __construct() {
         \GPBMetadata\PlayerProtocol::initOnce();
@@ -81,6 +87,32 @@ class PlayerInfo extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkMessage($var, \Logic\Protocol\PlayerBasicInfo::class);
         $this->playerBasicInfo = $var;
+
+        return $this;
+    }
+
+    /**
+     *状态
+     *
+     * Generated from protobuf field <code>.Logic.Protocol.PlayerState state = 3;</code>
+     * @return int
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     *状态
+     *
+     * Generated from protobuf field <code>.Logic.Protocol.PlayerState state = 3;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setState($var)
+    {
+        GPBUtil::checkEnum($var, \Logic\Protocol\PlayerState::class);
+        $this->state = $var;
 
         return $this;
     }

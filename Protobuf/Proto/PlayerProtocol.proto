@@ -14,6 +14,7 @@ message PlayerInfo
 {
     uint32 uId                          = 1;    //uId
     PlayerBasicInfo playerBasicInfo     = 2;    //基本信息
+    PlayerState state                   = 3;    //状态
 }
 
 //玩家基本信息

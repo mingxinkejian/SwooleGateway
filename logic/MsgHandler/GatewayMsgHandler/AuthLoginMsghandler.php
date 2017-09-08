@@ -8,14 +8,24 @@ use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Context\Context;
 use Logic\LogicManager\GatewayServerManager;
 
+use Logic\Protocol\ProtocolCmd;
+use Logic\Protocol\LoginReq;
+
 /**
  * 登录验证
  */
 class AuthLoginMsgHandler extends MsgHandler
 {
-    public function handlerMsg($connection,$msgPkg)
+    public function registProtocols()
     {
-        $unpackMsg = msgpack_unpack($msgPkg);
+        $this->_protocolMappers[ProtocolCmd::CMD_REGIST_REQ] = MsgHandler::MSG_REQ_NAMESPACE . "LoginReq";
+    }
+
+    public function handlerMsg($connection,$request,$context)
+    {
+        $clientHeader = $context->userData->pkgHeader;
+        $msgPkg = $context->userData->pkg;
+        
         GatewayServerManager::getInstance()->redisManager->select(1);
 
         $loginData = GatewayServerManager::getInstance()->redisManager->get($unpackMsg['userName']);

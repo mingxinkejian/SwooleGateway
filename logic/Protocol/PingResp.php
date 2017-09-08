@@ -9,9 +9,6 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *心跳包信息
- *心跳包只有响应，没有请求
- *
  * Generated from protobuf message <code>Logic.Protocol.PingResp</code>
  */
 class PingResp extends \Google\Protobuf\Internal\Message

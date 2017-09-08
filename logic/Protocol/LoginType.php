@@ -12,11 +12,11 @@ namespace Logic\Protocol;
 class LoginType
 {
     /**
-     *默认不使用
+     *默认账号体系
      *
-     * Generated from protobuf enum <code>LOGIN_TYPE_DEFAULT = 0;</code>
+     * Generated from protobuf enum <code>LOGIN_TYPE_ACCOUNT = 0;</code>
      */
-    const LOGIN_TYPE_DEFAULT = 0;
+    const LOGIN_TYPE_ACCOUNT = 0;
     /**
      *QQ平台
      *
@@ -32,9 +32,9 @@ class LoginType
     /**
      *游客访问
      *
-     * Generated from protobuf enum <code>LOGIN_TYPE_MSDK_GUEST = 3;</code>
+     * Generated from protobuf enum <code>LOGIN_TYPE_GUEST = 3;</code>
      */
-    const LOGIN_TYPE_MSDK_GUEST = 3;
+    const LOGIN_TYPE_GUEST = 3;
     /**
      *第三方平台
      *

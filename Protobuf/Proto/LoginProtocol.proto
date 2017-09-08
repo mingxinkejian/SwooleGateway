@@ -14,10 +14,10 @@ import "PlayerProtocol.proto";
 //玩家登陆类型
 enum LoginType
 {
-    LOGIN_TYPE_DEFAULT          = 0; //默认不使用
+    LOGIN_TYPE_ACCOUNT          = 0; //默认账号体系
     LOGIN_TYPE_MSDK_QQ          = 1; //QQ平台
     LOGIN_TYPE_MSDK_WX          = 2; //微信平台
-    LOGIN_TYPE_MSDK_GUEST       = 3; //游客访问
+    LOGIN_TYPE_GUEST            = 3; //游客访问
     LOGIN_TYPE_THIRD_PLATFORM   = 4; //第三方平台
 };
 //终端类型
@@ -53,11 +53,46 @@ message PlayerEnvInfo
 };
 //心跳包信息
 //心跳包只有响应，没有请求
+message PingReq
+{
+    int32 uId = 1;
+};
 message PingResp
 {
     int32 ret       = 1;    //返回值
     uint64 svrTime  = 2;    //服务器时间
     bytes extData   = 3;    //扩展信息
+};
+
+//注册请求
+message RegistReq
+{
+    bytes username              = 1;    //用户名
+    bytes password              = 2;    //密码
+    bytes openId                = 3;    //openID
+    LoginType loginType         = 4;    //注册类型
+    PlayerEnvInfo playerEnvInfo = 5;    //玩家的机器相关信息（用于数据统计）
+    OSType osType               = 6;    //玩家终端类型
+    int32 channel               = 7;    //第三方渠道号
+};
+//注册响应
+message RegistResp
+{
+    int32 ret                   = 1;    //返回值
+    int32 uId                   = 2;    //uId
+    bytes loginToken            = 3;    //登陆Token，通常有登陆服务器的情况下，登陆服务器返回的Token，并用这个Token和网关进行验证
+};
+//账号信息
+message AccountInfo
+{
+    int32 uId                   = 1;    //uId
+    bytes username              = 2;    //用户名
+    bytes password              = 3;    //密码
+    bytes openId                = 4;    //openID
+    LoginType loginType         = 5;    //注册类型
+    OSType osType               = 6;    //终端类型
+    int32 channel               = 7;    //第三方渠道号
+    uint64 registTime           = 8;    //注册时间
 }
 
 //登陆请求
@@ -72,7 +107,8 @@ message LoginReq
     PlayerEnvInfo playerEnvInfo = 7;    //玩家的机器相关信息（用于数据统计）
     bytes deviceCode            = 8;    //用于消息推送使用，一般来说用deviceId即可
     OSType osType               = 9;    //玩家终端类型
-    uint32 channel              = 10;    //第三方渠道号
+    int32 channel               = 10;   //第三方渠道号
+    int32 svrId                 = 11;   //玩家连接服务器ID
 };
 //登陆响应
 message LoginResp
@@ -84,4 +120,13 @@ message LoginResp
     bytes extMsg                = 5;    //额外信息的返回
 };
 
-//
+//登出请求
+message LogoutReq
+{
+    int32  uId              = 1;
+}
+//登出响应
+message LogoutResp
+{
+    int32 ret               = 1;
+}

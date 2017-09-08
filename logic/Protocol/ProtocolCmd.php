@@ -30,24 +30,34 @@ class ProtocolCmd
      */
     const MESSAGE_TYPE_SYSTEM = 4096;
     /**
+     *注册
+     *
+     * Generated from protobuf enum <code>CMD_REGIST_REQ = 4097;</code>
+     */
+    const CMD_REGIST_REQ = 4097;
+    /**
+     * Generated from protobuf enum <code>CMD_REGIST_RESP = 4098;</code>
+     */
+    const CMD_REGIST_RESP = 4098;
+    /**
      *登陆
      *
-     * Generated from protobuf enum <code>CMD_LOGIN_REQ = 4097;</code>
+     * Generated from protobuf enum <code>CMD_LOGIN_REQ = 4099;</code>
      */
-    const CMD_LOGIN_REQ = 4097;
+    const CMD_LOGIN_REQ = 4099;
     /**
-     * Generated from protobuf enum <code>CMD_LOGIN_RESP = 4098;</code>
+     * Generated from protobuf enum <code>CMD_LOGIN_RESP = 4100;</code>
      */
-    const CMD_LOGIN_RESP = 4098;
+    const CMD_LOGIN_RESP = 4100;
     /**
      *退出
      *
-     * Generated from protobuf enum <code>CMD_LOGOUT_REQ = 4099;</code>
+     * Generated from protobuf enum <code>CMD_LOGOUT_REQ = 4101;</code>
      */
-    const CMD_LOGOUT_REQ = 4099;
+    const CMD_LOGOUT_REQ = 4101;
     /**
-     * Generated from protobuf enum <code>CMD_LOGOUT_RESP = 4100;</code>
+     * Generated from protobuf enum <code>CMD_LOGOUT_RESP = 4102;</code>
      */
-    const CMD_LOGOUT_RESP = 4100;
+    const CMD_LOGOUT_RESP = 4102;
 }
 

@@ -37,7 +37,6 @@ class ServerException extends \Exception{
                 case E_CORE_ERROR:
                 case E_COMPILE_ERROR:
                 case E_USER_ERROR:
-                    ob_end_clean();
                     break;
             }
             //保存日志

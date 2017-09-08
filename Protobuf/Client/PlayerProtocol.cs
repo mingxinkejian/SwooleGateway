@@ -22,19 +22,20 @@ namespace Logic.Protocol {
     static PlayerProtocolReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChRQbGF5ZXJQcm90b2NvbC5wcm90bxIOTG9naWMuUHJvdG9jb2wiUwoKUGxh",
+            "ChRQbGF5ZXJQcm90b2NvbC5wcm90bxIOTG9naWMuUHJvdG9jb2wifwoKUGxh",
             "eWVySW5mbxILCgN1SWQYASABKA0SOAoPcGxheWVyQmFzaWNJbmZvGAIgASgL",
-            "Mh8uTG9naWMuUHJvdG9jb2wuUGxheWVyQmFzaWNJbmZvIoMBCg9QbGF5ZXJC",
-            "YXNpY0luZm8SDAoEbmFtZRgBIAEoDBIqCgVzdGF0ZRgCIAEoDjIbLkxvZ2lj",
-            "LlByb3RvY29sLlBsYXllclN0YXRlEgsKA3NleBgDIAEoDRISCgpyZWdpc3RU",
-            "aW1lGAQgASgEEhUKDWxhc3RMb2dpblRpbWUYBSABKAQqbAoLUGxheWVyU3Rh",
-            "dGUSFwoTUExBWUVSX1NUQVRFX05PUk1BTBAAEhcKE1BMQVlFUl9TVEFURV9G",
-            "T1JCSUQQARIUChBQTEFZRVJfU1RBVEVfQkFOEAISFQoRUExBWUVSX1NUQVRF",
-            "X0lOSVQQA2IGcHJvdG8z"));
+            "Mh8uTG9naWMuUHJvdG9jb2wuUGxheWVyQmFzaWNJbmZvEioKBXN0YXRlGAMg",
+            "ASgOMhsuTG9naWMuUHJvdG9jb2wuUGxheWVyU3RhdGUigwEKD1BsYXllckJh",
+            "c2ljSW5mbxIMCgRuYW1lGAEgASgMEioKBXN0YXRlGAIgASgOMhsuTG9naWMu",
+            "UHJvdG9jb2wuUGxheWVyU3RhdGUSCwoDc2V4GAMgASgNEhIKCnJlZ2lzdFRp",
+            "bWUYBCABKAQSFQoNbGFzdExvZ2luVGltZRgFIAEoBCpsCgtQbGF5ZXJTdGF0",
+            "ZRIXChNQTEFZRVJfU1RBVEVfTk9STUFMEAASFwoTUExBWUVSX1NUQVRFX0ZP",
+            "UkJJRBABEhQKEFBMQVlFUl9TVEFURV9CQU4QAhIVChFQTEFZRVJfU1RBVEVf",
+            "SU5JVBADYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Logic.Protocol.PlayerState), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PlayerInfo), global::Logic.Protocol.PlayerInfo.Parser, new[]{ "UId", "PlayerBasicInfo" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PlayerInfo), global::Logic.Protocol.PlayerInfo.Parser, new[]{ "UId", "PlayerBasicInfo", "State" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Protocol.PlayerBasicInfo), global::Logic.Protocol.PlayerBasicInfo.Parser, new[]{ "Name", "State", "Sex", "RegistTime", "LastLoginTime" }, null, null, null)
           }));
     }
@@ -93,6 +94,7 @@ namespace Logic.Protocol {
     public PlayerInfo(PlayerInfo other) : this() {
       uId_ = other.uId_;
       PlayerBasicInfo = other.playerBasicInfo_ != null ? other.PlayerBasicInfo.Clone() : null;
+      state_ = other.state_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -128,6 +130,20 @@ namespace Logic.Protocol {
       }
     }
 
+    /// <summary>Field number for the "state" field.</summary>
+    public const int StateFieldNumber = 3;
+    private global::Logic.Protocol.PlayerState state_ = 0;
+    /// <summary>
+    ///状态
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Logic.Protocol.PlayerState State {
+      get { return state_; }
+      set {
+        state_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as PlayerInfo);
@@ -143,6 +159,7 @@ namespace Logic.Protocol {
       }
       if (UId != other.UId) return false;
       if (!object.Equals(PlayerBasicInfo, other.PlayerBasicInfo)) return false;
+      if (State != other.State) return false;
       return true;
     }
 
@@ -151,6 +168,7 @@ namespace Logic.Protocol {
       int hash = 1;
       if (UId != 0) hash ^= UId.GetHashCode();
       if (playerBasicInfo_ != null) hash ^= PlayerBasicInfo.GetHashCode();
+      if (State != 0) hash ^= State.GetHashCode();
       return hash;
     }
 
@@ -169,6 +187,10 @@ namespace Logic.Protocol {
         output.WriteRawTag(18);
         output.WriteMessage(PlayerBasicInfo);
       }
+      if (State != 0) {
+        output.WriteRawTag(24);
+        output.WriteEnum((int) State);
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -179,6 +201,9 @@ namespace Logic.Protocol {
       }
       if (playerBasicInfo_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerBasicInfo);
+      }
+      if (State != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) State);
       }
       return size;
     }
@@ -196,6 +221,9 @@ namespace Logic.Protocol {
           playerBasicInfo_ = new global::Logic.Protocol.PlayerBasicInfo();
         }
         PlayerBasicInfo.MergeFrom(other.PlayerBasicInfo);
+      }
+      if (other.State != 0) {
+        State = other.State;
       }
     }
 
@@ -216,6 +244,10 @@ namespace Logic.Protocol {
               playerBasicInfo_ = new global::Logic.Protocol.PlayerBasicInfo();
             }
             input.ReadMessage(playerBasicInfo_);
+            break;
+          }
+          case 24: {
+            state_ = (global::Logic.Protocol.PlayerState) input.ReadEnum();
             break;
           }
         }
