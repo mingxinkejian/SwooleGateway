@@ -1,11 +1,15 @@
 <?php
 
+/**
+ * @Author: Ming ming
+ * @Date:   2017-09-09 14:57:57
+ * @Last Modified by:   Ming ming
+ * @Last Modified time: 2017-09-09 16:57:13
+ */
 namespace Logic\LogicManager;
 
 use Logic\MsgHandler\LoginMsgHandler;
-/**
-* 
-*/
+
 class WorkerServerManager extends Singleton
 {
     private $_logicMapper = array();

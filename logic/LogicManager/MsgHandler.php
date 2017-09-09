@@ -1,9 +1,16 @@
 <?php
 
-namespace Logic\LogicManager;
 /**
-* 所有消息的基类，MsgHandler文件夹下的所有Handler都继承此类
-*/
+ * @Author: Ming ming
+ * @Date:   2017-09-08 11:31:30
+ * @Last Modified by:   Ming ming
+ * @Last Modified time: 2017-09-09 14:58:21
+ * 
+ * 所有消息的基类，MsgHandler文件夹下的所有Handler都继承此类
+ * 
+ */
+namespace Logic\LogicManager;
+
 abstract class MsgHandler
 {
     public $_msgId;

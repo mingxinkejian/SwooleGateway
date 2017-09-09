@@ -11,7 +11,8 @@ package Logic.Protocol;
 
 enum RetCode
 {
-    SUCCESS             = 0x0;  //成功
+    SUCCESS             = 0x0;      //成功
 
-    REGIST_FAILED       = 0x1000; //注册失败
+    REGIST_FAILED       = 0x1000;   //注册失败
+    LOGIN_FAILED        = 0x10001;  //登陆失败
 }

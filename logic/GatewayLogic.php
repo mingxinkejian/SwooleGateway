@@ -36,22 +36,23 @@ class GatewayLogic
     public static function initRedis()
     {
         //先初始化注册账号的Key
-        $registKeyExist = GatewayServerManager::getInstance()->redisManager->exists(CommonDefine::REDIS_KEY_REG_SEQUENCE);
+        $registKeyExist = GatewayServerManager::getInstance()->dbRedis->exists(CommonDefine::REDIS_KEY_REG_SEQUENCE);
         if($registKeyExist == false)
         {
-            GatewayServerManager::getInstance()->redisManager->set(CommonDefine::REDIS_KEY_REG_SEQUENCE,CommonDefine::UID_INIT);
+            GatewayServerManager::getInstance()->dbRedis->set(CommonDefine::REDIS_KEY_REG_SEQUENCE,CommonDefine::UID_INIT);
         }
     }
 
     public static function pingDB()
     {
-        GatewayServerManager::getInstance()->redisManager->ping();
+        GatewayServerManager::getInstance()->pingDB();
     }
 
     public static function onClientConnect($gatewayServer,$connection)
     {
         //把客户端连接转发给后端
-        $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
+        // $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
+        // 客户端登陆成功后，通过数据绑定以及游戏服ID绑定相关连接信息
     }
     /**
      *  unsigned int    packLen,        (4字节) //包长度，包括数据字段

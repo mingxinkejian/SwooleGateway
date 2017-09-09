@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @Author: Ming ming
+ * @Date:   2017-09-09 14:58:33
+ * @Last Modified by:   Ming ming
+ * @Last Modified time: 2017-09-09 15:04:27
+ * 网关相关逻辑管理器
+ */
 namespace Logic\LogicManager;
 
 use SwooleGateway\DataBase\Redis;
@@ -13,7 +21,8 @@ use Logic\MsgHandler\GatewayMsgHandler\RegistMsgHandler;
 class GatewayServerManager extends Singleton
 {
     private $_logicMapper = array();
-    public $redisManager;
+    public $dbRedis;
+    public $tokenRedis;
 
     public function init()
     {
@@ -35,7 +44,9 @@ class GatewayServerManager extends Singleton
 
     public function initRedis($redisConfig)
     {
-        $this->redisManager = new Redis($redisConfig);
+        $this->dbRedis = new Redis($redisConfig);
+        $this->tokenRedis = new Redis($redisConfig);
+        $this->tokenRedis->select(1);
     }
 
     public function getMsgHandler($msgId)
@@ -52,5 +63,11 @@ class GatewayServerManager extends Singleton
     {
         $sendBody = $cmd . $msg;
         $clientConnection->send($sendBody);
+    }
+
+    public function pingDB()
+    {
+        $this->dbRedis->ping();
+        $this->tokenRedis->ping();
     }
 }

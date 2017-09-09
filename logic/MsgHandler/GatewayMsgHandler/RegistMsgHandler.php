@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @Author: Ming ming
+ * @Date:   2017-09-09 15:24:56
+ * @Last Modified by:   Ming ming
+ * @Last Modified time: 2017-09-09 16:56:38
+ */
 namespace Logic\MsgHandler\GatewayMsgHandler;
 
 use Logic\LogicManager\MsgHandler;
@@ -18,9 +24,7 @@ use Logic\Protocol\PlayerEnvInfo;
 use Logic\Protocol\RetCode;
 use Logic\Protocol\AccountInfo;
 
-/**
- * 注册验证
- */
+
 class RegistMsgHandler extends MsgHandler
 {
     public function registProtocols()
@@ -66,11 +70,11 @@ class RegistMsgHandler extends MsgHandler
         }
         else
         {
-            $userInfo = GatewayServerManager::getInstance()->redisManager->get($accountKey);
+            $userInfo = GatewayServerManager::getInstance()->dbRedis->get($accountKey);
 
             if($userInfo === false)
             {
-                $uId = GatewayServerManager::getInstance()->redisManager->incrBy(CommonDefine::REDIS_KEY_REG_SEQUENCE, CommonDefine::UID_INCR_STEP);
+                $uId = GatewayServerManager::getInstance()->dbRedis->incrBy(CommonDefine::REDIS_KEY_REG_SEQUENCE, CommonDefine::UID_INCR_STEP);
                 //添加新用户
                 $accountInfo = new AccountInfo();
                 $accountInfo->setUId($uId);
@@ -80,9 +84,9 @@ class RegistMsgHandler extends MsgHandler
                 $accountInfo->setLoginType($request->getLoginType());
                 $accountInfo->setOsType($request->getOsType());
                 $accountInfo->setChannel($request->getChannel());
-                $accountInfo->setRegistTime(time());
+                $accountInfo->setRegistTime(date('Y-m-d H:i:s'));
                 
-                $ret = GatewayServerManager::getInstance()->redisManager->set($accountKey,$accountInfo->serializeToString());
+                $ret = GatewayServerManager::getInstance()->dbRedis->set($accountKey,$accountInfo->serializeToString());
                 if($ret == true)
                 {
                     $loginToken = md5($accountKey . microtime());
@@ -92,7 +96,7 @@ class RegistMsgHandler extends MsgHandler
                     $resp->setLoginToken($loginToken);
                     GatewayServerManager::getInstance()->sendMsgToClient($connection,ProtocolCmd::CMD_REGIST_RESP,$resp->serializeToString());
                     //token可以存到制定的地方
-                    //
+                    GatewayServerManager::getInstance()->tokenRedis->set($accountKey, $loginToken, CommonDefine::LOGIN_TOKEN_EXPIRE_TIME);
                     return;
                 }
             }
@@ -120,7 +124,6 @@ class RegistMsgHandler extends MsgHandler
                 break;
             case LoginType::LOGIN_TYPE_MSDK_QQ:
             case LoginType::LOGIN_TYPE_MSDK_WX:
-                
             case LoginType::LOGIN_TYPE_GUEST:
             case LoginType::LOGIN_TYPE_THIRD_PLATFORM:
                 $accountKey = sprintf("%01d%01d%s",$request->getLoginType(), $request->getOsType(), $request->getOpenId());

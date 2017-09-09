@@ -211,6 +211,31 @@ class GatewayServer extends GatewayObject
         return true;
     }
 
+    public function sendClientMsgToWorker($cmd,$clientConntion,$gatewayHeader,$protocolCmd,$data = '')
+    {
+        $gatewayData = $gatewayHeader;
+        $gatewayData['cmd'] = $cmd;
+        $gatewayData['body'] = $protocolCmd . $data;
+        $gatewayData['extData'] = '';
+
+        if($this->workerConnections)
+        {
+            //根据路由规则，选择一个Worker把请求转发
+
+            $workerConnection = $this->bindClientToWorker($clientConntion,$cmd,$data);
+            if(isset($workerConnection))
+            {
+                $workerConnection->send($gatewayData);
+            }
+        }
+        else
+        {
+
+        }
+
+        return true;
+    }
+
     public function bindClientToWorker($clientConnection,$cmd,$buffer)
     {
         if (!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key])) {
