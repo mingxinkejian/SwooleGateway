@@ -77,6 +77,20 @@ class GatewayObject
         $this->_server->loadSwooleConfig($config);
     }
 
+    /**
+     * 分割svrId,
+     * svrId类似于IPv4地址
+     * 0.0.0.0形式，中间两位为保留位
+     * 1.0.0.2表示大区ID为1，服务器ID为2
+     * 
+     * @param  [type] $svrId [description]
+     * @return [type]        [description]
+     */
+    protected function splitSvrId($svrId)
+    {
+        return explode('.', $svrId);
+    }
+
     // public function __call($name, $args)
     // {
     //     return call_user_func_array(array($this->_server, $name), $args);

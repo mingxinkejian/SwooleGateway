@@ -197,7 +197,7 @@ class GatewayServer extends GatewayObject
         {
             //根据路由规则，选择一个Worker把请求转发
 
-            $workerConnection = $this->bindClientToWorker($clientConntion,$cmd,$data);
+            $workerConnection = $this->getClientToWorker($clientConntion,$cmd,$data);
             if(isset($workerConnection))
             {
                 $workerConnection->send($gatewayData);
@@ -222,7 +222,7 @@ class GatewayServer extends GatewayObject
         {
             //根据路由规则，选择一个Worker把请求转发
 
-            $workerConnection = $this->bindClientToWorker($clientConntion,$cmd,$data);
+            $workerConnection = $this->getClientToWorker($clientConntion,$cmd,$data);
             if(isset($workerConnection))
             {
                 $workerConnection->send($gatewayData);
@@ -236,12 +236,24 @@ class GatewayServer extends GatewayObject
         return true;
     }
 
-    public function bindClientToWorker($clientConnection,$cmd,$buffer)
+    public function getClientToWorker($clientConnection,$cmd,$buffer)
     {
-        if (!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key])) {
+        if(!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key]))
+        {
             $clientConnection->key = array_rand($this->workerKeyConnections);
         }
         return $this->workerKeyConnections[$clientConnection->key];
+    }
+
+    public function bindClientToWorker($clientConnection,$gameSvrId)
+    {
+        if(!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key]))
+        {
+            $clientConnection->key = $gameSvrId;
+            return true;
+        }
+
+        return false;
     }
 
     /*****************************************注册中心相关*********************************************************/
@@ -324,6 +336,7 @@ class GatewayServer extends GatewayObject
         //连接成功后发送包通知
         $data['cmd'] = CmdDefine::CMD_GATEWAY_REGISTER_REQ;
         $data['address'] = $scheme['scheme'] . '://' . $scheme['host'] . ':' . $scheme['port'];
+        $data['gatewaySvrId'] = $this->_settings['gatewaySvrId'];
 
         $this->registerConnection->send(json_encode($data));
 
@@ -461,7 +474,7 @@ class GatewayServer extends GatewayObject
     {
         $connection = $this->workerConnections[$fd];
         unset($this->workerConnections[$fd]);
-        unset($this->workerKeyConnections[$connection->key]);
+        unset($this->workerKeyConnections[$connection->gameSvrId]);
     }
     /**
      * 正常情况下，Worker端是不发送ping的，心跳只有Gateway来发
@@ -479,16 +492,18 @@ class GatewayServer extends GatewayObject
     {
         $swConnInfo = $connection->getConnectionInfo();
         $workerKey = json_decode($msgPkg['body'], true);
+        $gameSvrId = $this->splitSvrId($workerKey['gameSvrId'])[3];
         $key = $swConnInfo['remote_ip'] . ':' . $workerKey['workerKey'];
         //判断是否存在
-        if(isset($this->workerKeyConnections[$key]))
+        if(isset($this->workerKeyConnections[$gameSvrId]))
         {
             $this->_server->serverClose($connection->fd);
             return;
         }
         $connection->key = $key;
-        $this->_server->logger(LoggerLevel::INFO,'Worker连接 Key: ' . $key);
-        $this->workerKeyConnections[$key] = $connection;
+        $connection->gameSvrId = $gameSvrId;
+        $this->_server->logger(LoggerLevel::INFO,'Worker连接 Key: ' . $key . ' gameSvrId:' . $workerKey['gameSvrId']);
+        $this->workerKeyConnections[$gameSvrId] = $connection;
 
         $respData = GatewayWorkerProtocol::$emptyPkg;
         $respData['cmd'] = CmdDefine::CMD_WORKER_GATEWAY_RESP;

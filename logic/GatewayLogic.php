@@ -268,7 +268,7 @@ class GatewayLogic
             $session = json_decode($this->clientConnections[$data['connectionId']]->session);
             $sessionMerge = json_decode($data['extData']);
             $session = array_merge($sessionMerge, $session);
-            $this->_clientConnections[$data['connection_id']]->session = json_encode($session);
+            $this->_clientConnections[$data['connectionId']]->session = json_encode($session);
         }
     }
 
@@ -456,7 +456,7 @@ class GatewayLogic
 
     private static function sendToGroup($gatewayServer,$connection,$msgPkg)
     {
-        $body = $msgPkg['$body'];
+        $body = $msgPkg['body'];
         $extData = json_decode($msgPkg['extData'], true);
         $groupArray = $extData['group'];
         $excludeConnectionId = $extData['exclude'];
@@ -515,7 +515,7 @@ class GatewayLogic
 
     private static function getClientIdByUid($gatewayServer,$connection,$msgPkg)
     {
-        $uId = $msgPkg['$extData'];
+        $uId = $msgPkg['extData'];
 
         if(empty($gatewayServer->uIdClientConnections[$uId]))
         {

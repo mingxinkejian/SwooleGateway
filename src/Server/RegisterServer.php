@@ -156,8 +156,9 @@ class RegisterServer extends GatewayObject
         $connInfo->fd = $connection->fd;
         $connInfo->address = $dataPkg['address'];
         $connInfo->connection = $connection;
+        $connInfo->gatewaySvrId = $dataPkg['gatewaySvrId'];
 
-        $this->_server->logger(LoggerLevel::INFO, "registGateway: " . $connInfo->address);
+        $this->_server->logger(LoggerLevel::INFO, "registGateway: " . $connInfo->address . ' gatewaySvrId:' . $connInfo->gatewaySvrId);
         $this->_gatewayConnections[$connection->fd] = $connInfo;
         $this->broadcastGatewayToWorker();
     }
@@ -168,10 +169,11 @@ class RegisterServer extends GatewayObject
         $connInfo->fd = $connection->fd;
         $connInfo->address = $dataPkg['address'];
         $connInfo->connection = $connection;
+        $connInfo->gameSvrId = $dataPkg['gameSvrId'];
 
-        $this->_server->logger(LoggerLevel::INFO, "registWorker: " . $connInfo->address);
+        $this->_server->logger(LoggerLevel::INFO, "registWorker: " . $connInfo->address . ' gameSvrId:' . $connInfo->gameSvrId);
         $this->workerConnections[$connection->fd] = $connInfo;
-        $this->broadcastGatewayToWorker($connection);
+        $this->broadcastGatewayToWorker($connInfo);
     }
 
     /*****************************************集群监听相关*********************************************************/
@@ -256,28 +258,54 @@ class RegisterServer extends GatewayObject
      * 向后端Worker广播Gateway内部通讯地址
      * 每次后端Worker连接注册中心时广播一次
      * 每次Gateway连接注册中心时广播一次
+     * 同一个大区下的Gateway和Worker才会收到相应的地址
      * @return [type] [description]
      */
-    public function broadcastGatewayToWorker($workerConnection = null)
+    public function broadcastGatewayToWorker($workerConnInfo = null)
     {
         $data['cmd'] = CmdDefine::CMD_BROADCAST_GATEWAYS;
         $data['gateways'] = array();
 
+        $sendWorkerConnections = array();
         foreach($this->_gatewayConnections as $value)
         {
             $gateway = array();
             $gateway['address'] = $value->address;
-            array_push($data['gateways'], $gateway);
+            $gateway['gatewaySvrId'] = $value->gatewaySvrId;
+
+            $gatewaySvrIdSplit = $this->splitSvrId($value->gatewaySvrId);
+
+            if($workerConnInfo == null)
+            {
+                foreach($this->workerConnections as $workerInfo)
+                {
+                    $workerSvrIdSplit = $this->splitSvrId($workerInfo->gameSvrId);
+
+                    if($workerSvrIdSplit[0] === $gatewaySvrIdSplit[0])
+                    {
+                        array_push($data['gateways'], $gateway);
+                        array_push($sendWorkerConnections, $workerInfo);
+                    }
+                }
+            }
+            else
+            {
+                $workerSvrIdSplit = $this->splitSvrId($workerConnInfo->gameSvrId);
+                if($workerSvrIdSplit[0] === $gatewaySvrIdSplit[0])
+                {
+                    array_push($data['gateways'], $gateway);
+                }
+            }
         }
         $addressData = json_encode($data);
 
-        if($workerConnection != null)
+        if($workerConnInfo != null)
         {
-            $workerConnection->send($addressData);
+            $workerConnInfo->connection->send($addressData);
             return;
         }
 
-        foreach($this->workerConnections as $value)
+        foreach($sendWorkerConnections as $value)
         {
             $value->connection->send($addressData);
         }

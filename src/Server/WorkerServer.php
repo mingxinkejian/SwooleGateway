@@ -328,7 +328,8 @@ class WorkerServer extends GatewayObject
         $connectionData = GatewayWorkerProtocol::$emptyPkg;
         $connectionData['cmd'] = CmdDefine::CMD_WORKER_GATEWAY_REQ;
         $connectionData['body'] = json_encode(array(
-                'workerKey' =>"WorkerServer:{$workerId}"
+                'workerKey' =>"WorkerServer:{$workerId}",
+                'gameSvrId' => $this->_settings['gameSvrId']
             ));
 
         $this->_gatewayConnection->send($connectionData);

@@ -4,7 +4,7 @@
  * @Author: Ming ming
  * @Date:   2017-09-09 16:14:57
  * @Last Modified by:   Ming ming
- * @Last Modified time: 2017-09-09 16:57:03
+ * @Last Modified time: 2017-09-12 11:46:53
  */
 namespace Logic\MsgHandler\GatewayMsgHandler;
 
@@ -85,6 +85,18 @@ class AuthLoginMsgHandler extends MsgHandler
                     return;
                 }
             }
+        }
+
+        //登陆成功后绑定svrId
+        if($this->_server->bindClientToWorker($connection,$request->getSvrId()) == false)
+        {
+            $loginResp = new LoginResp();
+            $loginResp->setRet(RetCode::LOGIN_FAILED);
+            $loginResp->setSvrTime(time());
+            $loginResp->setVersion('1.0.0');
+            $loginResp->setExtMsg('亲爱的用户，服务器处于维护状态，请稍后再试！');
+            GatewayServerManager::getInstance()->sendMsgToClient($connection,ProtocolCmd::CMD_LOGIN_RESP,$loginResp->serializeToString());
+            return;
         }
 
         //登陆成功的话，将uId等信息转发给游戏服，游戏服返回登陆信息
