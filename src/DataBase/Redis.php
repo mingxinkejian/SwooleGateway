@@ -37,7 +37,7 @@ class Redis
 
         try
         {
-            $connectResult = $this->_redis->pconnect($this->_config['host'],$this->_config['port']);
+            $connectResult = $this->_redis->connect($this->_config['host'],$this->_config['port']);
             if(!empty($this->_config['password']) && $connectResult)
             {
                 $this->_redis->auth($this->_config['password']);

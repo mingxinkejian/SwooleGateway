@@ -60,9 +60,9 @@ class AccountInfo extends \Google\Protobuf\Internal\Message
     /**
      *注册时间
      *
-     * Generated from protobuf field <code>uint64 registTime = 8;</code>
+     * Generated from protobuf field <code>bytes registTime = 8;</code>
      */
-    private $registTime = 0;
+    private $registTime = '';
 
     public function __construct() {
         \GPBMetadata\LoginProtocol::initOnce();
@@ -254,8 +254,8 @@ class AccountInfo extends \Google\Protobuf\Internal\Message
     /**
      *注册时间
      *
-     * Generated from protobuf field <code>uint64 registTime = 8;</code>
-     * @return int|string
+     * Generated from protobuf field <code>bytes registTime = 8;</code>
+     * @return string
      */
     public function getRegistTime()
     {
@@ -265,13 +265,13 @@ class AccountInfo extends \Google\Protobuf\Internal\Message
     /**
      *注册时间
      *
-     * Generated from protobuf field <code>uint64 registTime = 8;</code>
-     * @param int|string $var
+     * Generated from protobuf field <code>bytes registTime = 8;</code>
+     * @param string $var
      * @return $this
      */
     public function setRegistTime($var)
     {
-        GPBUtil::checkUint64($var);
+        GPBUtil::checkString($var, False);
         $this->registTime = $var;
 
         return $this;

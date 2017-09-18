@@ -211,14 +211,14 @@ class GatewayServer extends GatewayObject
         return true;
     }
 
-    public function sendClientMsgToWorker($cmd,$clientConntion,$gatewayHeader,$protocolCmd,$data = '')
+    public function sendClientMsgToWorker($cmd,$clientConntion,$gatewayHeader,$clientAppHeader,$data = '')
     {
         $gatewayData = $gatewayHeader;
         $gatewayData['cmd'] = $cmd;
-        $gatewayData['body'] = $protocolCmd . $data;
+        $gatewayData['body'] = $clientAppHeader . $data;
         $gatewayData['extData'] = '';
 
-        if($this->workerConnections)
+        if(!empty($this->workerConnections))
         {
             //根据路由规则，选择一个Worker把请求转发
 
@@ -227,10 +227,14 @@ class GatewayServer extends GatewayObject
             {
                 $workerConnection->send($gatewayData);
             }
+            else
+            {
+                $this->_server->logger(LoggerLevel::ERROR,'客户端绑定的后端服务器没有可提供的服务！');
+            }
         }
         else
         {
-
+            $this->_server->logger(LoggerLevel::DEBUG,'后端服务器没有可提供的服务！');
         }
 
         return true;
@@ -240,14 +244,22 @@ class GatewayServer extends GatewayObject
     {
         if(!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key]))
         {
-            $clientConnection->key = array_rand($this->workerKeyConnections);
+            return null;
         }
         return $this->workerKeyConnections[$clientConnection->key];
     }
 
     public function bindClientToWorker($clientConnection,$gameSvrId)
     {
-        if(!isset($clientConnection->key) || !isset($this->workerKeyConnections[$clientConnection->key]))
+
+        if (isset($clientConnection->key))
+        {
+            return false;
+        }
+
+        $clientConnection->key = $gameSvrId;
+
+        if(isset($this->workerKeyConnections[$clientConnection->key]))
         {
             $clientConnection->key = $gameSvrId;
             return true;
@@ -475,6 +487,12 @@ class GatewayServer extends GatewayObject
         $connection = $this->workerConnections[$fd];
         unset($this->workerConnections[$fd]);
         unset($this->workerKeyConnections[$connection->gameSvrId]);
+
+
+        if(!array_key_exists($clientConnection->key, $this->workerKeyConnections))
+        {
+            unset($clientConnection->key);
+        }
     }
     /**
      * 正常情况下，Worker端是不发送ping的，心跳只有Gateway来发

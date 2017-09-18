@@ -19,15 +19,17 @@ class PingMsgHandler extends MsgHandler
 {
     public function registProtocols()
     {
-        $this->_protocolMappers[ProtocolCmd::CMD_PING] = MsgHandler::MSG_REQ_NAMESPACE . "PingReq";
+        $this->_protocolMappers[ProtocolCmd::CMD_PING][1] = MsgHandler::MSG_REQ_NAMESPACE . "PingReq";
     }
 
     public function handlerMsg($connection,$request,$context)
     {
+        $request->mergeFromString($context->userData->pkg);
+        $svrTime = time();
         $pongResp = new PingResp();
         $pongResp->setRet(RetCode::SUCCESS);
-        $pongResp->setSvrTime(microtime());
+        $pongResp->setSvrTime($svrTime);
 
-        $connection->send(ProtocolCmd::CMD_PONG . $pongResp->serializeToString());
+        GatewayServerManager::getInstance()->sendMsgToClient($connection,ProtocolCmd::CMD_PONG,$pongResp->serializeToString());
     }
 }

@@ -6,6 +6,7 @@ $pbUserInfo->setId(1);
 $pbUserInfo->setName('echo');
 $str = $pbUserInfo->serializeToString();
 // $str = $pbUserInfo->serializeToJsonString();
+// var_dump($str);
 var_dump(bin2hex($str));
 $ptTempUser = new UserInfo();
 $ptTempUser->mergeFromString($str);

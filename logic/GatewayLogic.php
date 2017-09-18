@@ -13,6 +13,7 @@
 #
 namespace Logic;
 
+use Logic\ServerLogic;
 use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Logger\LoggerLevel;
@@ -23,7 +24,7 @@ use Logic\CommonDefine\CommonDefine;
 /**
 * 
 */
-class GatewayLogic
+class GatewayLogic extends ServerLogic
 {
     public static function onServerStart($gatewayServer)
     {
@@ -54,15 +55,7 @@ class GatewayLogic
         // $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CONNECTION,$connection,$connection->userData->gatewayHeader);
         // 客户端登陆成功后，通过数据绑定以及游戏服ID绑定相关连接信息
     }
-    /**
-     *  unsigned int    packLen,        (4字节) //包长度，包括数据字段
-     *  unsigned short  version,        (2字节) //协议版本号
-     *  unsigned int    appId,          (4字节) //应用ID 
-     *  unsigned short  gatewayCmd,     (2字节) //网关命令
-     *  unsigned int    protocolCmd,    (4字节) //协议命令
-     *  unsigned short  checkSum,       (2字节) //数据校验
-     *  unsigned int    msgIdx          (4字节) //数据包顺序
-     */
+
     public static function onClientReceivePkg($gatewayServer,$connection,$context)
     {
         try {
@@ -76,7 +69,7 @@ class GatewayLogic
                         if(!empty($handler))
                         {
                             //根据cmd创建Request
-                            $request = $handler->createRequest($clientPkgHeader['protocolCmd']);
+                            $request = $handler->createRequest($clientPkgHeader['protocolCmd'],$clientPkgHeader['subCmd']);
                             if(isset($request))
                             {
                                 $context->userData->pkgHeader = $clientPkgHeader;
@@ -88,7 +81,7 @@ class GatewayLogic
                                 //断开连接
                                 $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE, $connection, $connection->userData->gatewayHeader);
                                 $connection->close();
-                                $gatewayServer->_server->logger(LoggerLevel::ERROR,"protocolCmd 未注册");
+                                $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到protocolCmd:[{$clientPkgHeader['protocolCmd']}] subCmd:[{$clientPkgHeader['subCmd']}]  的Request");
                             }
                             
                         }
@@ -97,7 +90,7 @@ class GatewayLogic
                             //断开连接
                             $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE, $connection, $connection->userData->gatewayHeader);
                             $connection->close();
-                            $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$clientPkgHeader['protocolCmd']}]的MsgHandler");
+                            $gatewayServer->_server->logger(LoggerLevel::ERROR,"未找到protocolCmd:[{$clientPkgHeader['protocolCmd']}]的MsgHandler");
                         }
                     }
                     break;
@@ -113,20 +106,8 @@ class GatewayLogic
             //断开连接
             $gatewayServer->sendToWorker(CmdDefine::CMD_CLIENT_CLOSE, $connection, $connection->userData->gatewayHeader);
             $connection->close();
-            $gatewayServer->_server->loger(LoggerLevel::ERROR, $e->getMessage());
+            $gatewayServer->_server->logger(LoggerLevel::ERROR, $e->getMessage());
         }      
-    }
-    /**
-     * 拆取包头
-     * @param  [type] $context [description]
-     * @return [type]          [description]
-     */
-    public static function getClientPkgHeader($context)
-    {
-        $HEAD_LEN = 22;
-        $pkgHeader = unpack("nversion/NappId/ngatewayCmd/NprotocolCmd/ncheckSum/NmsgIdx", substr($context->userData->pkg, 0, $HEAD_LEN));
-        $context->userData->pkg = substr($context->userData->pkg, $HEAD_LEN);
-        return $pkgHeader;
     }
 
     public static function onInnerWorkerReceivePkg($gatewayServer,$connection,$msgPkg)

@@ -4,7 +4,7 @@
  * @Author: Ming ming
  * @Date:   2017-09-09 15:24:56
  * @Last Modified by:   Ming ming
- * @Last Modified time: 2017-09-09 16:56:38
+ * @Last Modified time: 2017-09-18 12:32:14
  */
 namespace Logic\MsgHandler\GatewayMsgHandler;
 
@@ -14,6 +14,7 @@ use SwooleGateway\Common\CmdDefine;
 use SwooleGateway\Server\Context\Context;
 use Logic\LogicManager\GatewayServerManager;
 use Logic\CommonDefine\CommonDefine;
+use SwooleGateway\Logger\LoggerLevel;
 
 use Logic\Protocol\ProtocolCmd;
 use Logic\Protocol\RegistReq;
@@ -29,7 +30,7 @@ class RegistMsgHandler extends MsgHandler
 {
     public function registProtocols()
     {
-       $this->_protocolMappers[ProtocolCmd::CMD_REGIST_REQ] = MsgHandler::MSG_REQ_NAMESPACE . "RegistReq";
+       $this->_protocolMappers[ProtocolCmd::CMD_REGIST_REQ][1] = MsgHandler::MSG_REQ_NAMESPACE . "RegistReq";
     }
 
     public function handlerMsg($connection,$request,$context)
@@ -51,7 +52,6 @@ class RegistMsgHandler extends MsgHandler
     {
         //反序列化
         $request->mergeFromString($context->userData->pkg);
-
         /**
          * 注册步骤
          * 判断当前玩家登陆类型
@@ -85,7 +85,6 @@ class RegistMsgHandler extends MsgHandler
                 $accountInfo->setOsType($request->getOsType());
                 $accountInfo->setChannel($request->getChannel());
                 $accountInfo->setRegistTime(date('Y-m-d H:i:s'));
-                
                 $ret = GatewayServerManager::getInstance()->dbRedis->set($accountKey,$accountInfo->serializeToString());
                 if($ret == true)
                 {
@@ -96,42 +95,27 @@ class RegistMsgHandler extends MsgHandler
                     $resp->setLoginToken($loginToken);
                     GatewayServerManager::getInstance()->sendMsgToClient($connection,ProtocolCmd::CMD_REGIST_RESP,$resp->serializeToString());
                     //token可以存到制定的地方
-                    GatewayServerManager::getInstance()->tokenRedis->set($accountKey, $loginToken, CommonDefine::LOGIN_TOKEN_EXPIRE_TIME);
+                    $tokenKeyName = $accountKey . CommonDefine::TOKEN_NAME_SUFFIX;
+                    GatewayServerManager::getInstance()->tokenRedis->set($tokenKeyName, $loginToken, CommonDefine::LOGIN_TOKEN_EXPIRE_TIME);
                     return;
                 }
             }
+
+            $accountInfo = new AccountInfo();
+            $accountInfo->mergeFromString($userInfo);
+
+            //更新一下Token
+            $loginToken = md5($accountKey . microtime());
+            //token可以存到制定的地方
+            $tokenKeyName = $accountKey . CommonDefine::TOKEN_NAME_SUFFIX;
+            GatewayServerManager::getInstance()->tokenRedis->set($tokenKeyName, $loginToken, CommonDefine::LOGIN_TOKEN_EXPIRE_TIME);
+            
             $resp = new RegistResp();
             $resp->setRet(RetCode::REGIST_FAILED);
-            $resp->setUId(0);
-            $resp->setLoginToken('');
+            $resp->setUId($accountInfo->getUId());
+            $resp->setLoginToken($loginToken);
             GatewayServerManager::getInstance()->sendMsgToClient($connection,ProtocolCmd::CMD_REGIST_RESP,$resp->serializeToString());
             
         }
-    }
-
-    /**
-     * 根据注册信息获取账号数据，前2位为登陆类型和终端类型
-     * @param  [type] $request [description]
-     * @return [type]          [description]
-     */
-    private function getAccountKey($request)
-    {
-        $accountKey = '';
-        switch($request->getLoginType())
-        {
-            case LoginType::LOGIN_TYPE_ACCOUNT:
-                $accountKey = sprintf("%01d%01d%s",$request->getLoginType(), $request->getOsType(), $request->getUsername());
-                break;
-            case LoginType::LOGIN_TYPE_MSDK_QQ:
-            case LoginType::LOGIN_TYPE_MSDK_WX:
-            case LoginType::LOGIN_TYPE_GUEST:
-            case LoginType::LOGIN_TYPE_THIRD_PLATFORM:
-                $accountKey = sprintf("%01d%01d%s",$request->getLoginType(), $request->getOsType(), $request->getOpenId());
-                break;
-            default:
-
-                break;
-        };
-        return $accountKey;
     }
 }

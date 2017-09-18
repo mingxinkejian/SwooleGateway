@@ -14,6 +14,7 @@
 
 namespace Logic;
 
+use Logic\ServerLogic;
 use SwooleGateway\Server\Protocols\GatewayWorkerProtocol;
 use SwooleGateway\Server\Context\Context;
 use SwooleGateway\Common\CmdDefine;
@@ -22,7 +23,7 @@ use SwooleGateway\Logger\LoggerLevel;
 /**
 * 
 */
-class WorkerLogic
+class WorkerLogic extends ServerLogic
 {
     /**
      * 服务器启动时的回调，可以在此初始化数据库连接等等
@@ -32,6 +33,18 @@ class WorkerLogic
     {
         //消息处理注册到管理器中
         WorkerServerManager::getInstance()->registerMsgHandlerMapper();
+
+        self::initRedis();
+    }
+
+    public static function initRedis()
+    {
+        WorkerServerManager::getInstance()->initRedis($gatewayServer->_settings['redisConf']);
+    }
+
+    public static function pingDB()
+    {
+        WorkerServerManager::getInstance()->pingDB();
     }
 
     public static function clientConnect()
@@ -41,16 +54,39 @@ class WorkerLogic
 
     public static function clientMessage($workerServer,$connection,$msgPkg)
     {
-        $protocolCmd = unpack("NprotocolCmd", substr($msgPkg, 0,4));
-        $handler = WorkerServerManager::getInstance()->getMsgHandler($protocolCmd['protocolCmd']);
-        if(!empty($handler))
-        {
-            $handler->_server = $workerServer;
-            $handler->handlerMsg(Context::$connection, substr($msgPkg, 4));
+        try {
+            $context = new \stdClass();
+            $context->userData = new \stdClass();
+            $context->userData->pkg = $msgPkg;
+            //拆包
+            $clientPkgHeader = self::getClientPkgHeader($context);
+            $handler = WorkerServerManager::getInstance()->getMsgHandler($clientPkgHeader['protocolCmd']);
+            if(!empty($handler))
+            {
+                //根据cmd创建Request
+                $request = $handler->createRequest($clientPkgHeader['protocolCmd'],$clientPkgHeader['subCmd']);
+                if(isset($request))
+                {
+                    $context->userData->pkgHeader = $clientPkgHeader;
+                    $handler->_server = $workerServer;
+                    $handler->handlerMsg(Context::$connection, $request, $context);
+                }
+                else
+                {
+                    $workerServer->_server->logger(LoggerLevel::ERROR, "未找到protocolCmd:[{$clientPkgHeader['protocolCmd']}] subCmd:[{$clientPkgHeader['subCmd']}]  的Request");
+                }
+                
+                
+            }
+            else
+            {
+                Context::$workerServer->_server->logger(LoggerLevel::ERROR, "未找到protocolCmd:[{$clientPkgHeader['protocolCmd']}]的MsgHandler");
+            }
         }
-        else
+        catch(Exception $e)
         {
-            Context::$workerServer->_server->logger(LoggerLevel::ERROR,"未找到MsgId:[{$protocolCmd['protocolCmd']}]的MsgHandler");
+            //断开连接
+            $workerServer->_server->logger(LoggerLevel::ERROR, $e->getMessage());
         }
 
         // $gatewayData                    = GatewayWorkerProtocol::$emptyPkg;
@@ -61,19 +97,6 @@ class WorkerLogic
         // Context::$connection->send($gatewayData);
     }
     
-    /**
-     * 拆取包头
-     * @param  [type] $context [description]
-     * @return [type]          [description]
-     */
-    public static function getClientPkgHeader($context)
-    {
-        $HEAD_LEN = 22;
-        $pkgHeader = unpack("nversion/NappId/ngatewayCmd/NprotocolCmd/ncheckSum/NmsgIdx", substr($context->userData->pkg, 0, $HEAD_LEN));
-        $context->userData->pkg = substr($context->userData->pkg, $HEAD_LEN);
-        return $pkgHeader;
-    }
-
     public static function clientClose()
     {
 

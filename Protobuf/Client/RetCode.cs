@@ -22,8 +22,9 @@ namespace Logic.Protocol {
     static RetCodeReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg1SZXRDb2RlLnByb3RvEg5Mb2dpYy5Qcm90b2NvbCoqCgdSZXRDb2RlEgsK",
-            "B1NVQ0NFU1MQABISCg1SRUdJU1RfRkFJTEVEEIAgYgZwcm90bzM="));
+            "Cg1SZXRDb2RlLnByb3RvEg5Mb2dpYy5Qcm90b2NvbCo+CgdSZXRDb2RlEgsK",
+            "B1NVQ0NFU1MQABISCg1SRUdJU1RfRkFJTEVEEIAgEhIKDExPR0lOX0ZBSUxF",
+            "RBCBgARiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Logic.Protocol.RetCode), }, null));
@@ -41,6 +42,10 @@ namespace Logic.Protocol {
     ///注册失败
     /// </summary>
     [pbr::OriginalName("REGIST_FAILED")] RegistFailed = 4096,
+    /// <summary>
+    ///登陆失败
+    /// </summary>
+    [pbr::OriginalName("LOGIN_FAILED")] LoginFailed = 65537,
   }
 
   #endregion

@@ -4,7 +4,7 @@
  * @Author: Ming ming
  * @Date:   2017-09-09 14:58:33
  * @Last Modified by:   Ming ming
- * @Last Modified time: 2017-09-09 15:04:27
+ * @Last Modified time: 2017-09-17 16:37:58
  * 网关相关逻辑管理器
  */
 namespace Logic\LogicManager;
@@ -46,6 +46,7 @@ class GatewayServerManager extends Singleton
     {
         $this->dbRedis = new Redis($redisConfig);
         $this->tokenRedis = new Redis($redisConfig);
+        $this->dbRedis->select(0);
         $this->tokenRedis->select(1);
     }
 
@@ -61,7 +62,7 @@ class GatewayServerManager extends Singleton
 
     public function sendMsgToClient($clientConnection,$cmd,$msg)
     {
-        $sendBody = $cmd . $msg;
+        $sendBody = pack("N",$cmd) . $msg;
         $clientConnection->send($sendBody);
     }
 

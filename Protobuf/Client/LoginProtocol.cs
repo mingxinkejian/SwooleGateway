@@ -42,7 +42,7 @@ namespace Logic.Protocol {
             "YW1lGAIgASgMEhAKCHBhc3N3b3JkGAMgASgMEg4KBm9wZW5JZBgEIAEoDBIs",
             "Cglsb2dpblR5cGUYBSABKA4yGS5Mb2dpYy5Qcm90b2NvbC5Mb2dpblR5cGUS",
             "JgoGb3NUeXBlGAYgASgOMhYuTG9naWMuUHJvdG9jb2wuT1NUeXBlEg8KB2No",
-            "YW5uZWwYByABKAUSEgoKcmVnaXN0VGltZRgIIAEoBCKfAgoITG9naW5SZXES",
+            "YW5uZWwYByABKAUSEgoKcmVnaXN0VGltZRgIIAEoDCKfAgoITG9naW5SZXES",
             "EAoIdXNlcm5hbWUYASABKAwSEAoIcGFzc3dvcmQYAiABKAwSDgoGb3Blbklk",
             "GAMgASgMEgsKA3VJZBgEIAEoBRISCgpsb2dpblRva2VuGAUgASgMEiwKCWxv",
             "Z2luVHlwZRgGIAEoDjIZLkxvZ2ljLlByb3RvY29sLkxvZ2luVHlwZRI0Cg1w",
@@ -1639,15 +1639,15 @@ namespace Logic.Protocol {
 
     /// <summary>Field number for the "registTime" field.</summary>
     public const int RegistTimeFieldNumber = 8;
-    private ulong registTime_;
+    private pb::ByteString registTime_ = pb::ByteString.Empty;
     /// <summary>
     ///注册时间
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ulong RegistTime {
+    public pb::ByteString RegistTime {
       get { return registTime_; }
       set {
-        registTime_ = value;
+        registTime_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1685,7 +1685,7 @@ namespace Logic.Protocol {
       if (LoginType != 0) hash ^= LoginType.GetHashCode();
       if (OsType != 0) hash ^= OsType.GetHashCode();
       if (Channel != 0) hash ^= Channel.GetHashCode();
-      if (RegistTime != 0UL) hash ^= RegistTime.GetHashCode();
+      if (RegistTime.Length != 0) hash ^= RegistTime.GetHashCode();
       return hash;
     }
 
@@ -1724,9 +1724,9 @@ namespace Logic.Protocol {
         output.WriteRawTag(56);
         output.WriteInt32(Channel);
       }
-      if (RegistTime != 0UL) {
-        output.WriteRawTag(64);
-        output.WriteUInt64(RegistTime);
+      if (RegistTime.Length != 0) {
+        output.WriteRawTag(66);
+        output.WriteBytes(RegistTime);
       }
     }
 
@@ -1754,8 +1754,8 @@ namespace Logic.Protocol {
       if (Channel != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Channel);
       }
-      if (RegistTime != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RegistTime);
+      if (RegistTime.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(RegistTime);
       }
       return size;
     }
@@ -1786,7 +1786,7 @@ namespace Logic.Protocol {
       if (other.Channel != 0) {
         Channel = other.Channel;
       }
-      if (other.RegistTime != 0UL) {
+      if (other.RegistTime.Length != 0) {
         RegistTime = other.RegistTime;
       }
     }
@@ -1827,8 +1827,8 @@ namespace Logic.Protocol {
             Channel = input.ReadInt32();
             break;
           }
-          case 64: {
-            RegistTime = input.ReadUInt64();
+          case 66: {
+            RegistTime = input.ReadBytes();
             break;
           }
         }

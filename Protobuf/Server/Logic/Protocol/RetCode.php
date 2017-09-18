@@ -21,5 +21,11 @@ class RetCode
      * Generated from protobuf enum <code>REGIST_FAILED = 4096;</code>
      */
     const REGIST_FAILED = 4096;
+    /**
+     *登陆失败
+     *
+     * Generated from protobuf enum <code>LOGIN_FAILED = 65537;</code>
+     */
+    const LOGIN_FAILED = 65537;
 }
 
