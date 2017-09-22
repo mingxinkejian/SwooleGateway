@@ -202,6 +202,11 @@ class GatewayServer extends GatewayObject
             {
                 $workerConnection->send($gatewayData);
             }
+            else
+            {
+                $this->_server->logger(LoggerLevel::WARN,'客户端绑定的后端服务器没有可提供的服务！');
+                $clientConntion->close();
+            }
         }
         else
         {
@@ -230,6 +235,7 @@ class GatewayServer extends GatewayObject
             else
             {
                 $this->_server->logger(LoggerLevel::ERROR,'客户端绑定的后端服务器没有可提供的服务！');
+                $clientConntion->close();
             }
         }
         else

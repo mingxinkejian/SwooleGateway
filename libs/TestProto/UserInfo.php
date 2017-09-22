@@ -16,7 +16,11 @@ class UserInfo extends \Google\Protobuf\Internal\Message
      */
     private $id = 0;
     /**
-     * Generated from protobuf field <code>string name = 2;</code>
+     * Generated from protobuf field <code>int32 test = 2;</code>
+     */
+    private $test = 0;
+    /**
+     * Generated from protobuf field <code>string name = 3;</code>
      */
     private $name = '';
 
@@ -48,7 +52,29 @@ class UserInfo extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string name = 2;</code>
+     * Generated from protobuf field <code>int32 test = 2;</code>
+     * @return int
+     */
+    public function getTest()
+    {
+        return $this->test;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 test = 2;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setTest($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->test = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string name = 3;</code>
      * @return string
      */
     public function getName()
@@ -57,7 +83,7 @@ class UserInfo extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string name = 2;</code>
+     * Generated from protobuf field <code>string name = 3;</code>
      * @param string $var
      * @return $this
      */

@@ -92,7 +92,7 @@ message AccountInfo
     LoginType loginType         = 5;    //注册类型
     OSType osType               = 6;    //终端类型
     int32 channel               = 7;    //第三方渠道号
-    bytes registTime           = 8;    //注册时间
+    bytes registTime            = 8;    //注册时间
 }
 
 //登陆请求
